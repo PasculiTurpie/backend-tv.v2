@@ -6,7 +6,11 @@ const EquipoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    ipEquipo: {
+    typeEquipment:{
+      type: String,
+      required: true,
+    },
+    ipEquipment: {
       type: String,
     },
     description: {

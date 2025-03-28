@@ -4,7 +4,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.13.0"
+    "mongoose": "^8.13.0",
+    "ssh2": "^1.16.0"
   },
   "name": "backend-tv.v2",
   "version": "1.0.0",
