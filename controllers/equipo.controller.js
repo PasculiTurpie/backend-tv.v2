@@ -5,6 +5,7 @@ module.exports.getEquipment = async (req, res) => {
     const equipo = await Equipo.find().sort({ nombreEquipment: 1 });
     res.json(equipo);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error al obtener equipo' });
   }
 };
@@ -15,6 +16,7 @@ module.exports.getEquipmentById = async (req, res) => {
     if (!equipo) return res.status(404).json({ message: 'Equipo no encontrado' });
     res.json(equipo);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error al obtener equipo' });
   }
 };
@@ -22,9 +24,11 @@ module.exports.getEquipmentById = async (req, res) => {
 module.exports.postEquipment = async (req, res) => {
   try {
     const equipo = new Equipo(req.body);
+    console.log(equipo)
     await equipo.save();
     res.json(equipo);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error al crear equipo' });
   }
 }
@@ -35,6 +39,7 @@ module.exports.updateEquipment = async (req, res) => {
     if (!equipo) return res.status(404).json({ message: 'Equipo no encontrado' });
     res.json(equipo);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error al actualizar equipo' });
   }
 }
