@@ -8,7 +8,6 @@ const EquipoSchema = new mongoose.Schema(
     },
     typeEquipment:{
       type: String,
-      required: true,
     },
     ipEquipo: {
       type: String,
