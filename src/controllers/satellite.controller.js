@@ -25,35 +25,20 @@ module.exports.getSatelliteById = async (req, res) => {
 };
 
 module.exports.postSatellite = async (req, res) => {
-  try {
-    const satellite = new Satellite(req.body);
-    await satellite.save();
-    res.json(satellite);
-  } catch (error) {
-    console.error(error);
-
-    // Manejo específico para errores de clave duplicada
-    if (
-      error.name === "MongoServerError" &&
-      error.code === 11000 &&
-      error.errorResponse?.errmsg
-    ) {
-      // Extraer el valor duplicado con RegEx
-      const match = error.errorResponse.errmsg.match(
-        /dup key: { satelliteName: "(.*?)" }/
-      );
-      if (match && match[1]) {
-        return res
-          .status(500)
-          .json({ message: `El registro'${match[1]}' ya existe.` });
-      }
-    }
-
-    // Otro tipo de error
-    res.status(400).json({
-      message: `Error al guardar el satélite.`,
-    });
-  }
+   try {
+     const satellite = new Satellite(req.body);
+     await satellite.save();
+     res.status(201).json(satellite);
+   } catch (error) {
+     if (error.code === 11000) {
+       const field = Object.values(error.keyValue).join(", ");
+       return res.status(400).json({
+         message: `Ya existe un satélite con la misma combinación de ${field}`,
+       });
+     }
+     console.error(error);
+     res.status(500).json({ message: "Error del servidor" });
+   }
 };
 
 module.exports.updateSatellite = async (req, res) => {

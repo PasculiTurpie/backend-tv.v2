@@ -5,8 +5,9 @@ const Equipo = require("./routes/equipo.routes");
 const User = require("./routes/user.routes");
 const Ird = require("./routes/ird.routes");
 const Satellite = require("./routes/satellite.routes");
-const Polarization = require('./routes/polarization.routes')
+const Polarization = require("./routes/polarization.routes");
 const morgan = require("morgan");
+
 
 require("./config/config.mongoose");
 // detecta el puerto 3000
