@@ -5,6 +5,7 @@ const Equipo = require("./routes/equipo.routes");
 const User = require("./routes/user.routes");
 const Ird = require("./routes/ird.routes");
 const Satellite = require("./routes/satellite.routes");
+const Polarization = require('./routes/polarization.routes')
 const morgan = require("morgan");
 
 require("./config/config.mongoose");
@@ -34,6 +35,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://localhost:3000",
+  "http://192.168.56.1:5173",
 ];
 app.use(
   cors({
@@ -53,7 +55,7 @@ app.use(
 app.options("*", cors()); // Maneja pre-flight requests
 app.use(cors());
 
-app.use("/api/v2", Equipo, User, Ird, Satellite);
+app.use("/api/v2", Equipo, User, Ird, Satellite, Polarization);
 
 app.listen(PORT, () => {
   // si todo funciona bien, la consola mostrará qué puerto está detectando la aplicación
