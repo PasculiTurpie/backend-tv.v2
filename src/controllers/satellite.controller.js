@@ -25,20 +25,20 @@ module.exports.getSatelliteById = async (req, res) => {
 };
 
 module.exports.postSatellite = async (req, res) => {
-   try {
-     const satellite = new Satellite(req.body);
-     await satellite.save();
-     res.status(201).json(satellite);
-   } catch (error) {
-     if (error.code === 11000) {
-       const field = Object.values(error.keyValue).join(", ");
-       return res.status(400).json({
-         message: `Ya existe un satélite con la misma combinación de ${field}`,
-       });
-     }
-     console.error(error);
-     res.status(500).json({ message: "Error del servidor" });
-   }
+  try {
+    const satellite = new Satellite(req.body);
+    await satellite.save();
+    res.status(201).json(satellite);
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.values(error.keyValue).join(", ");
+      return res.status(400).json({
+        message: `Ya existe un satélite con la misma combinación de ${field}`,
+      });
+    }
+    console.error(error);
+    res.status(500).json({ message: "Error del servidor" });
+  }
 };
 
 module.exports.updateSatellite = async (req, res) => {
@@ -58,6 +58,7 @@ module.exports.updateSatellite = async (req, res) => {
 };
 
 module.exports.deleteSatellite = async (req, res) => {
+  console.log(req.params);
   try {
     const satellite = await Satellite.findByIdAndDelete(req.params.id);
     if (!satellite)
