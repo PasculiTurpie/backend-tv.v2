@@ -5,10 +5,10 @@ const IrdSchema = new mongoose.Schema(
     ipAdminIrd: {
       type: String,
     },
-    modelIrd: {
+    marcaIrd: {
       type: String,
     },
-    marcaIrd: {
+    modelIrd: {
       type: String,
     },
     versionIrd: {
