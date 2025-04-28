@@ -1,29 +1,33 @@
-const bcrypt = require('bcrypt')
-const User = require('../models/users.model')
+const bcrypt = require("bcrypt");
+const User = require("../models/users.model");
 
-module.exports.login = (req, res) =>{
-    const {email, password} = req.body;
-    User.findOne({email})
-    .then((user)=>{
-        if(!user){
-            res.send({message:`Usuario no encontrado`})
-        }
-        return bcrypt.compare(password, user.password)
-        .then((matched)=>{
-            const {id, name, email} = user
-            if(!matched){
-                res.send({message:`Contraseña incorrecta`})
-            }
-            res.json({message:`Usuario logueado correctamente`,
-                user:{
-                    id,
-                    name,
-                    email
-                }
-            })
-        })
-        .catch((error)=>{
-            res.status(401).send({message:error.message})
-        })
-    })
-}
+module.exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send({ message: "Usuario no encontrado" });
+    }
+
+    const matched = await bcrypt.compare(password, user.password);
+
+    if (!matched) {
+      return res.status(401).send({ message: "Contraseña incorrecta" });
+    }
+
+    const { id, name } = user;
+    res.json({
+      message: "Usuario logueado correctamente",
+      user: {
+        id,
+        name,
+        email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Error interno del servidor" });
+  }
+};
