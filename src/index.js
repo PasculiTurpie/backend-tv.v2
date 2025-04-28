@@ -6,6 +6,7 @@ const User = require("./routes/user.routes");
 const Ird = require("./routes/ird.routes");
 const Satellite = require("./routes/satellite.routes");
 const Polarization = require("./routes/polarization.routes");
+const Login = require('./routes/login.routes')
 const morgan = require("morgan");
 
 
@@ -56,7 +57,7 @@ app.use(
 app.options("*", cors()); // Maneja pre-flight requests
 app.use(cors());
 
-app.use("/api/v2", Equipo, User, Ird, Satellite, Polarization);
+app.use("/api/v2", Login, Equipo, User, Ird, Satellite, Polarization);
 
 app.listen(PORT, () => {
   // si todo funciona bien, la consola mostrará qué puerto está detectando la aplicación
