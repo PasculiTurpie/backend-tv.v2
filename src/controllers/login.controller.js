@@ -17,13 +17,14 @@ module.exports.login = async (req, res) => {
       return res.status(401).send({ message: "Contraseña incorrecta" });
     }
 
-    const { id, name } = user;
+    const { id, username, role } = user;
     res.json({
       message: "Usuario logueado correctamente",
       user: {
         id,
-        name,
+        username,
         email,
+        role,
       },
     });
   } catch (error) {
