@@ -54,16 +54,14 @@ module.exports.createUser = async (req, res) => {
 
     const savedUser = await newUser.save();
 
-    res
-      .status(201)
-      .json({
-        message: "Usuario creado con éxito!",
-        user: {
-          id: savedUser._id,
-          username: savedUser.username,
-          email: savedUser.email,
-        },
-      });
+    res.status(201).json({
+      message: "Usuario creado con éxito!",
+      user: {
+        id: savedUser._id,
+        username: savedUser.username,
+        email: savedUser.email,
+      },
+    });
   } catch (error) {
     console.error("Error al crear usuario:", error);
     res
@@ -73,15 +71,14 @@ module.exports.createUser = async (req, res) => {
 };
 
 module.exports.deleteUser = async (req, res) => {
-  console.log(req.params)
+  console.log(req.params);
   try {
-    const user = await User.findByIdAndDelete(req.params.id)
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user)
-      return res.status(404).json({ message: `Usuario no encontrado` })
-      res.json({message:'Usuario eliminado de la Base de datos'})
+      return res.status(404).json({ message: `Usuario no encontrado` });
+    res.json({ message: "Usuario eliminado de la Base de datos" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar usuario" });
   }
-  catch (error){
-    console.error(error)
-    res.status(500).json({message:'Error al eliminar usuario'})
-  }
-}
+};

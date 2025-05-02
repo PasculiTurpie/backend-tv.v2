@@ -7,29 +7,23 @@ const Ird = require("./routes/ird.routes");
 const Satellite = require("./routes/satellite.routes");
 const Polarization = require("./routes/polarization.routes");
 const Login = require('./routes/login.routes')
+const Logout = require("./routes/logout.routes");
 const morgan = require("morgan");
+require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
 
 require("./config/config.mongoose");
 // detecta el puerto 3000
-const { PORT = 3000 } = process.env;
+const PORT  = process.env.PORT;
 
 const app = express();
+
+
+
 app.use(express.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-/*
-const corsOptions = {
-  origin: 'http://localhost:5174",
-  method: ['GET','POST,'PATCH','PUT',''DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}
-
-app.use(cors(corsOptions))
-app.options('*', cors(corsOptions));
-*/
-
 app.use(morgan("dev"));
 
 const allowedOrigins = [
@@ -54,10 +48,7 @@ app.use(
   })
 );
 
-app.options("*", cors()); // Maneja pre-flight requests
-app.use(cors());
-
-app.use("/api/v2", Login, Equipo, User, Ird, Satellite, Polarization);
+app.use("/api/v2", Login, Logout, Equipo, User, Ird, Satellite, Polarization);
 
 app.listen(PORT, () => {
   // si todo funciona bien, la consola mostrará qué puerto está detectando la aplicación
