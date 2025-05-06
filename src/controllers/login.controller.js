@@ -55,6 +55,7 @@ module.exports.logout = async (req, res) => {
       res.clearCookie("access_token");
       return res.json({
         email,
+        message: `Sesión cerrada con éxito`,
       });
     }
   } catch (error) {
