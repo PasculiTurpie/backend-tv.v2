@@ -3,13 +3,16 @@ const bcrypt = require("bcrypt");
 
 module.exports.getAllUser = async (req, res) => {
   try {
+    console.log("Buscando usuarios...");
     const users = await User.find().sort({ name: 1 });
-    res.json(users);
+    console.log("Usuarios encontrados, enviando respuesta");
+    return res.json(users);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al obtener usuarios" });
+    console.error("Error capturado en catch:", error.message);
+    return res.status(500).json({ message: "Error al obtener usuarios" });
   }
 };
+
 
 module.exports.getUserId = async (req, res) => {
   try {
@@ -80,5 +83,31 @@ module.exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al eliminar usuario" });
+  }
+};
+
+
+
+module.exports.updateUser = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+      new: true, // Devuelve el documento actualizado
+      runValidators: true, // Ejecuta las validaciones del modelo
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({
+      message: "Usuario actualizado exitosamente",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+    res.status(500).json({ message: "Error al actualizar usuario" });
   }
 };
