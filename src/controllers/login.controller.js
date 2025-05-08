@@ -56,7 +56,7 @@ module.exports.logout = async (req, res) => {
       return res.json({
         email,
         message: 'Sesión cerrada con éxito'
-      });
+      })
     }
   } catch (error) {
     return res.status(500).json({
