@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const Equipo = require("./routes/equipo.routes");
 const User = require("./routes/user.routes");
 const Ird = require("./routes/ird.routes");
 const Satellite = require("./routes/satellite.routes");
@@ -9,8 +8,15 @@ const Polarization = require("./routes/polarization.routes");
 const Login = require("./routes/login.routes");
 const Logout = require("./routes/logout.routes");
 const VerifySession = require("./routes/verifyToken.routes");
-const Prueba = require("./routes/pruebaError.routes");
+const Conmutador = require('./routes/conmutador.routes');
+const Dcm = require('./routes/dcm.routes')
+const Titan = require('./routes/titan.routes')
+const DcmVmx = require('./routes/dcmVmx.routes')
+const RtesVmx = require('./routes/rtesVmx.routes')
+const RouterAsr = require('./routes/routerAsr.routes')
+const Contact = require('./routes/contact.routes')
 const errorHandler = require("./middleware/errorHandler");
+const Signal = require('./routes/signal.routes')
 const morgan = require("morgan");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
@@ -53,12 +59,18 @@ app.use(
   VerifySession,
   Login,
   Logout,
-  Equipo,
   User,
   Ird,
   Satellite,
   Polarization,
-  Prueba,
+  Conmutador,
+  Dcm,
+  Titan,
+  DcmVmx,
+  RtesVmx,
+  RouterAsr,
+  Signal,
+  Contact,
   errorHandler
 );
 
