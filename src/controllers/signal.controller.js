@@ -31,3 +31,22 @@ module.exports.getSignal = async (req, res) =>{
         res.status(500).json({message:`Error al obtener señal`})
     }
 }
+
+module.exports.getIdSignal = async (req, res) => {
+  try {
+     const signal = await Satellite.findById(req.params.id)
+      .populate("satelite")
+      .populate("contact")
+      .populate("equipos.decoderIrd")
+      .populate("equipos.conmutador")
+      .populate("equipos.encoderTitan")
+      .populate("equipos.dcm")
+      .populate("equipos.dcmVmx")
+      .populate("equipos.rtesVmx")
+      .populate("equipos.routerAsr");
+    res.json(signal);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: `Error al obtener señal` });
+  }
+};

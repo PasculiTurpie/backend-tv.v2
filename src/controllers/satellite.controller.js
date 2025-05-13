@@ -14,7 +14,7 @@ module.exports.getSatellites = async (req, res) => {
 
 module.exports.getSatelliteById = async (req, res) => {
   try {
-    const satellite = await Satellite.findById(req.params.id).populate("satelliteType");;
+    const satellite = await Satellite.findById(req.params.id).populate("satelliteType");
     if (!satellite)
       return res.status(404).json({ message: "Satélite no encontrado" });
     res.json(satellite);
