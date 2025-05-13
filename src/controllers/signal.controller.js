@@ -9,22 +9,23 @@ module.exports.createSignal = async (req, res) => {
     } catch (error) {
         console.error(error)
         res.status(500).json({
-            message:`Señal creada`
+            message:`Error al crear la señal`
         })
     }
 }
 
 module.exports.getSignal = async (req, res) =>{
     try {
-        const signal = await Signal.find().populate('satelite')
-      .populate('contact')
-      .populate('equipos.decoderIrd')
-      .populate('equipos.conmutador')
-      .populate('equipos.encoderTitan')
-      .populate('equipos.dcm')
-      .populate('equipos.dcmVmx')
-      .populate('equipos.rtesVmx')
-      .populate('equipos.routerAsr');
+        const signal = await Signal.find()
+          .populate("contact")
+          .populate("equipos.satelite")
+          .populate("equipos.decoderIrd")
+          .populate("equipos.conmutador")
+          .populate("equipos.encoderTitan")
+          .populate("equipos.dcm")
+          .populate("equipos.dcmVmx")
+          .populate("equipos.rtesVmx")
+          .populate("equipos.routerAsr");
         res.json(signal)
     } catch (error) {
         console.error(error)

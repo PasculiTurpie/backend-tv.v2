@@ -38,7 +38,6 @@ const SignalSchema = new mongoose.Schema(
         satelite: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Satellite",
-          required: true,
         },
         decoderIrd: {
           type: mongoose.Schema.Types.ObjectId,
