@@ -34,16 +34,16 @@ module.exports.getSignal = async (req, res) =>{
 
 module.exports.getIdSignal = async (req, res) => {
   try {
-     const signal = await Satellite.findById(req.params.id)
-      .populate("satelite")
-      .populate("contact")
-      .populate("equipos.decoderIrd")
-      .populate("equipos.conmutador")
-      .populate("equipos.encoderTitan")
-      .populate("equipos.dcm")
-      .populate("equipos.dcmVmx")
-      .populate("equipos.rtesVmx")
-      .populate("equipos.routerAsr");
+     const signal = await Signal.findById(req.params.id)
+     .populate("contact")
+     .populate("equipos.satelite")
+       .populate("equipos.decoderIrd")
+       .populate("equipos.conmutador")
+       .populate("equipos.encoderTitan")
+       .populate("equipos.dcm")
+       .populate("equipos.dcmVmx")
+       .populate("equipos.rtesVmx")
+       .populate("equipos.routerAsr");
     res.json(signal);
   } catch (error) {
     console.error(error);
