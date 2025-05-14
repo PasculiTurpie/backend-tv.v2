@@ -6,6 +6,10 @@ const TitanSchema = new mongoose.Schema(
             type:String,
             required:true,
         },
+        urlTitan:{
+            type:String,
+            default:"https://i.ibb.co/zHmRSv8C/ateme-titan.png"
+        },
         mcastIn:{
             type:String,
             required:true,

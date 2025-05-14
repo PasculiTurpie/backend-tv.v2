@@ -6,6 +6,11 @@ const SwitchSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    urlConmutador:{
+        type:String,
+        default:"https://i.ibb.co/FqX45Lsn/switch.png"
+
+    },
     interfacePort:{
         type:String,
         require:true,

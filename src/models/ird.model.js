@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const IrdSchema = new mongoose.Schema(
   {
+    urlIrd: {
+      type: String,
+      default:"https://i.ibb.co/pvW06r6K/ird-motorola.png"
+    },
     ipAdminIrd: {
       type: String,
     },
