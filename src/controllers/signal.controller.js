@@ -15,29 +15,30 @@ module.exports.createSignal = async (req, res) => {
 }
 
 module.exports.getSignal = async (req, res) =>{
-    try {
-        const signal = await Signal.find()
-          .populate("contact")
-          .populate("equipos.satelite")
-          .populate("equipos.decoderIrd")
-          .populate("equipos.conmutador")
-          .populate("equipos.encoderTitan")
-          .populate("equipos.dcm")
-          .populate("equipos.dcmVmx")
-          .populate("equipos.rtesVmx")
-          .populate("equipos.routerAsr");
-        res.json(signal)
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({message:`Error al obtener señal`})
-    }
+  try {
+    const signals = await Signal.find()
+      .populate("contact")
+      .populate("equipos.satelite")
+      .populate("equipos.decoderIrd")
+      .populate("equipos.conmutador")
+      .populate("equipos.encoderTitan")
+      .populate("equipos.dcm")
+      .populate("equipos.dcmVmx")
+      .populate("equipos.rtesVmx")
+      .populate("equipos.routerAsr");
+
+    res.status(200).json(signals);
+  } catch (error) {
+    console.error("Error al obtener señales:", error);
+    res.status(500).json({ message: "Error al obtener señales" });
+  }
 }
 
 module.exports.getIdSignal = async (req, res) => {
   try {
      const signal = await Signal.findById(req.params.id)
-     .populate("contact")
-     .populate("equipos.satelite")
+       .populate("contact")
+       .populate("equipos.satelite")
        .populate("equipos.decoderIrd")
        .populate("equipos.conmutador")
        .populate("equipos.encoderTitan")
@@ -45,9 +46,9 @@ module.exports.getIdSignal = async (req, res) => {
        .populate("equipos.dcmVmx")
        .populate("equipos.rtesVmx")
        .populate("equipos.routerAsr");
-    res.json(signal);
+    res.status(200).json(signal);
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener señales:", error);
     res.status(500).json({ message: `Error al obtener señal` });
   }
 };
