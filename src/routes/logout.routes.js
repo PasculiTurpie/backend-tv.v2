@@ -4,6 +4,6 @@ const auth = require('../config/auth');
 const router = express.Router();
 
 
-router.post('/logout', auth, User.logout)
+router.post('/logout', User.logout)
 
 module.exports = router;

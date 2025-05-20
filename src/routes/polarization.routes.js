@@ -4,8 +4,8 @@ const Polarization = require('../controllers/polarization.controller');
 const auth = require('../config/auth');
 
 
-router.get("/polarization", auth, Polarization.getPolarization);
-router.post('/polarization', auth, Polarization.createPolarization);
+router.get("/polarization", Polarization.getPolarization);
+router.post('/polarization',  Polarization.createPolarization);
 
 
 module.exports = router;
