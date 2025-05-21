@@ -20,7 +20,7 @@ module.exports.login = async (req, res) => {
       { id: user.id, username: user.username, role:user.role },
       process.env.SECRET_KEY,
       {
-        expiresIn: '1h'
+        expiresIn: '3h'
       }
     )
     res
