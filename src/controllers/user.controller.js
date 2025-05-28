@@ -90,12 +90,19 @@ module.exports.deleteUser = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const updateData = req.body;
+  console.log(id)
+  const updateData = { ...req.body };
+
+  // Eliminar password y confirmPassword si están vacíos
+  if (!updateData.password) {
+    delete updateData.password;
+    delete updateData.confirmPassword;
+  }
 
   try {
     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
-      new: true, // Devuelve el documento actualizado
-      runValidators: true, // Ejecuta las validaciones del modelo
+      new: true,
+      runValidators: true,
     });
 
     if (!updatedUser) {

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -21,11 +22,31 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default:'admin'
-    }
+      default: "admin",
+    },
   },
   { timestamps: true, versionKey: false }
 );
+
+// 🔒 Middleware para encriptar antes de guardar
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // no volver a encriptar
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// 🔒 Middleware para encriptar antes de actualizar
+UserSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  if (update.password) {
+    const salt = await bcrypt.genSalt(10);
+    update.password = await bcrypt.hash(update.password, salt);
+  }
+
+  next();
+});
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

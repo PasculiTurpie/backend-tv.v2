@@ -6,7 +6,7 @@ module.exports.getIrd = async (req, res, next) => {
     const ird = await IRD.find();
     res.json(ird);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching ird' });
+    res.status(404).json({ message: 'Error fetching ird' });
   }
 }
 
