@@ -10,12 +10,13 @@ module.exports.getIrd = async (req, res, next) => {
   }
 }
 
-module.exports.createIrd = async (req, res, next) => {
+module.exports.createIrd = async (req, res) => {
   try {
     const ird = new IRD(req.body);
     await ird.save();
-    res.json(ird);
+    res.status(201).json(ird);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error creating ird' });
   }
 }
