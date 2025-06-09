@@ -6,7 +6,7 @@ module.exports.getIrd = async (req, res, next) => {
     const ird = await IRD.find();
     res.json(ird);
   } catch (error) {
-    res.status(404).json({ message: 'Error fetching ird' });
+    res.status(404).json({ message: 'Error al obtener ird`s' });
   }
 }
 
@@ -17,7 +17,7 @@ module.exports.createIrd = async (req, res) => {
     res.status(201).json(ird);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error creating ird' });
+    res.status(500).json({ message: 'Error al crear ird' });
   }
 }
 
@@ -27,7 +27,7 @@ module.exports.deleteIrd = async (req, res, next) => {
     await IRD.findByIdAndDelete(id);
     res.json({ message: 'Ird deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting ird' });
+    res.status(500).json({ message: 'Error al eliminar ird' });
   }
 }
 
@@ -37,7 +37,7 @@ module.exports.updateIrd = async (req, res, next) => {
     const ird = await IRD.findByIdAndUpdate(id, req.body, { new: true });
     res.json(ird);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating ird' });
+    res.status(500).json({ message: 'Error al actualizar ird' });
     }
 }
 
@@ -47,6 +47,6 @@ module.exports.getIdIrd = async (req, res, next) => {
     const ird = await IRD.findById(id);
     res.json(ird);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching ird' });
+    res.status(500).json({ message: 'Error al obtener ird' });
     }
 }
