@@ -31,13 +31,13 @@ module.exports.deleteIrd = async (req, res, next) => {
   }
 }
 
-module.exports.updateIrd = async (req, res, next) => {
+module.exports.updateIrd = async (req, res) => {
   try {
     const id = req.params.id;
     const ird = await IRD.findByIdAndUpdate(id, req.body, { new: true });
     res.json(ird);
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar ird' });
+    res.status(500).json({ message: 'Error al actualizar Ird' });
     }
 }
 

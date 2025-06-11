@@ -23,3 +23,14 @@ module.exports.getDcm = async (req, res) =>{
         res.status(500).json({message:`Error al obtener el equipo`})
     }
 }
+
+module.exports.updateDcm = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const dcm = await Dcm.findByIdAndUpdate(id, req.body, { new: true });
+        res.json(dcm)
+        
+    } catch (error) {
+        res.status(500).json({ message: "Error al actualizar Dcm" });
+    }
+}
