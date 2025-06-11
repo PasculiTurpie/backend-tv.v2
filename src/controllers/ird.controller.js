@@ -25,7 +25,7 @@ module.exports.deleteIrd = async (req, res, next) => {
   try {
     const id = req.params.id;
     await IRD.findByIdAndDelete(id);
-    res.json({ message: 'Ird deleted successfully' });
+    res.json({ message: 'Ird eliminado' });
   } catch (error) {
     res.status(500).json({ message: 'Error al eliminar ird' });
   }
