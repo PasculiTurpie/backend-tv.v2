@@ -23,3 +23,36 @@ module.exports.getRtesVmx = async (req, res) =>{
         res.status(500).json({message:`Error al obtener el equipo`})
     }
 }
+
+module.exports.getIdRtesVmx = async (req, res) =>{
+    try {
+        const id = req.params.id;
+        const rtesVmx = await RtesVmx.findById(id)
+        res.json(rtesVmx)
+        
+    } catch (error) {
+        res.status(500).json({message:"Error al obtener Rtes Vmx"})
+    }
+}
+
+module.exports.deleteRtesVmx = async(req, res) =>{
+    try {
+        const id = req.params.id;
+        const rtesVmx = await RtesVmx.findByIdAndDelete(id);
+        if(!rtesVmx)
+            return res.status(404).json({message:"Elemento no encontrado"})
+        res.json({message:"Elemento eliminado de la base de datos"})
+    } catch (error) {
+      res.status(500).json({ message: "Error al eliminar Rtes Vmx" });  
+    }
+}
+
+module.exports.updateTitan = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const rtesVmx = await RtesVmx.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(rtesVmx);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar Rtes Vmx" });
+  }
+};
