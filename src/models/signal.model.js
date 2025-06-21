@@ -33,41 +33,7 @@ const SignalSchema = new mongoose.Schema(
         ref: "Contact",
       },
     ],
-    equipos: {
-      satelite: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Satellite",
-      },
-      decoderIrd: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Ird",
-      },
-      conmutador: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Conmutador",
-      },
-      encoderTitan: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Titan",
-      },
-      dcm: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Dcm",
-      },
-      dcmVmx: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "DcmVmx",
-      },
-      rtesVmx: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "RtesVmx",
-      },
-      routerAsr: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "RouterAsr",
-      },
     },
-  },
   { timestamps: true, versionKey: false }
 );
 
