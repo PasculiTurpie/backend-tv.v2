@@ -1,4 +1,3 @@
-const { required } = require('joi')
 const mongoose = require('mongoose')
 
 const SwitchSchema = new mongoose.Schema({
@@ -22,6 +21,9 @@ const SwitchSchema = new mongoose.Schema({
 
 },{timestamps:true, versionKey:false})
 
-
+SwitchSchema.index(
+  { nameSwitch: 1, interfacePort: 1, vlanInterface: 1},
+  { unique: true }
+);
 const Conmutador  = mongoose.model("Conmutador", SwitchSchema);
 module.exports = Conmutador ;
