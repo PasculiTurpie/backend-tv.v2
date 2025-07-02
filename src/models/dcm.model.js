@@ -10,14 +10,6 @@ const DcmSchema = new mongoose.Schema(
       type: String,
       default: "https://i.ibb.co/xKZdK3mK/dcm.png",
     },
-    mcastIn: {
-      type: String,
-      required: true,
-    },
-    mcastOut: {
-      type: String,
-      required: true,
-    },
     ipGestion: {
       type: String,
       required: true,
