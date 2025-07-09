@@ -14,6 +14,10 @@ const DcmSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    interface:{
+      type: String,
+      required: true,
+    },
     port: {
       type: String,
       required: true,

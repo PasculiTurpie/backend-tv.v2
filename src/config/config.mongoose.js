@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 
 mongoose
   .connect(
-    "mongodb+srv://rodrigosturpie:Kid5Ir85nz0W0leF@signaltv.cpwdycn.mongodb.net/"
+   process.env.MONGO_URI
     /* 'mongodb://localhost:27017/signalTV' */
   )
   .then(() => console.log("Connected to MongoDB..."))
