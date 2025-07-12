@@ -44,7 +44,8 @@ module.exports.getIdEquipo = async (req, res) => {
 
 module.exports.updateEquipo = async (req, res) => {
   try {
-    const equipo = await findByIdAndUpdate(req.params.id, req.body, {
+    const id = req.params.id;
+    const equipo = await Equipo.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     if (!equipo)
@@ -52,7 +53,7 @@ module.exports.updateEquipo = async (req, res) => {
     res.json(equipo);
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: "Error al actualizar equipo" });
+    res.status(500).json({ message: "Error al actualizar equipo" });
   }
 }
 
