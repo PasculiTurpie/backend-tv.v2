@@ -19,6 +19,7 @@ const Channel = require('./routes/channel.routes')
 const Signal = require('./routes/signal.routes')
 const Tech = require('./routes/tipoTech.routes')
 const Nodo = require('./routes/node.routes')
+const Equipo = require('./routes/equipo.routes')
 const errorHandler = require("./middleware/errorHandler");
 const morgan = require("morgan");
 require("dotenv").config();
@@ -77,6 +78,7 @@ app.use(
   Channel,
   Tech,
   Nodo,
+  Equipo,
   errorHandler
 );
 
