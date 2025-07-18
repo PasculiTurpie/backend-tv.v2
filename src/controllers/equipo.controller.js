@@ -1,4 +1,3 @@
-const { findByIdAndUpdate } = require('../models/conmutador.model')
 const Equipo = require('../models/equipo.model')
 
 module.exports.createEquipo = async (req, res) => {
@@ -20,14 +19,13 @@ module.exports.createEquipo = async (req, res) => {
 
 module.exports.getEquipo = async (req, res) => {
   try {
-    const equipo = await Equipo.find();
+    const equipo = await Equipo.find().populate("tipoNombre");
     res.json(equipo)
   } catch (error) {
     console.log(error);
     res.send(404).json({ message: `Error al encontrar equipos` });
   }
 }
-
 
 module.exports.getIdEquipo = async (req, res) => {
   try {

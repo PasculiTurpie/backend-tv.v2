@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const SignalSchema = new mongoose.Schema(
   {
@@ -33,9 +33,9 @@ const SignalSchema = new mongoose.Schema(
         ref: "Contact",
       },
     ],
-    },
+  },
   { timestamps: true, versionKey: false }
 );
 
-const Signal = mongoose.model('Signal', SignalSchema)
+const Signal = mongoose.model("Signal", SignalSchema);
 module.exports = Signal;

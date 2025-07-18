@@ -15,8 +15,9 @@ const SchemaEquipos = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tipoEquipo: {
-      type: String,
+    tipoNombre: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TipoEquipo",
       required: true,
     },
     ip_gestion: {
