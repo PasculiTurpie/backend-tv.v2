@@ -21,7 +21,7 @@ module.exports.createTipoEquipo = async (req, res) => {
             const field = Object.values(error.keyValue).join(", ");
             console.log(field);
           return res.status(400).json({
-            message: `Ya existe el switch ${field}`
+            message: `Ya existe elemento ${field}`
           });
         }
     console.error(error);
