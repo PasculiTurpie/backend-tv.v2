@@ -9,12 +9,12 @@ const ContactSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      required: true,
+      sparse: true,
     },
     telefono: {
       type: String,
       unique: true,
-      required: true,
+      sparse: true,
     },
   },
   { timestamps: true, versionKey: false }
