@@ -7,11 +7,11 @@ const SignalSchema = new mongoose.Schema(
       required: true,
     },
     numberChannelSur: {
-      type: String,
+      type: Number,
       required: true,
     },
     numberChannelCn: {
-      type: String,
+      type: Number,
       required: true,
     },
     logoChannel: {
@@ -22,11 +22,17 @@ const SignalSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    tipoServicio: {
+      type: String,
+      required: true,
+    },
     tipoTecnologia: {
       type: String,
       required: true,
     },
-
+    source: {
+      type: String,
+    },
     contact: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -36,6 +42,9 @@ const SignalSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false }
 );
+
+// Índice combinado único
+SignalSchema.index({ nameChannel: 1, tipoTecnologia: 1 }, { unique: true });
 
 const Signal = mongoose.model("Signal", SignalSchema);
 module.exports = Signal;
