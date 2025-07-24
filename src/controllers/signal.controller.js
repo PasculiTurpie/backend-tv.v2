@@ -13,7 +13,7 @@ module.exports.createSignal = async (req, res) => {
   }
 };
 
-module.exports.getSignal = async (req, res) => {
+/* module.exports.getSignal = async (req, res) => {
   try {
     const signals = await Signal.find().populate("contact");
     res.status(200).json(signals);
@@ -21,7 +21,18 @@ module.exports.getSignal = async (req, res) => {
     console.error("Error al obtener señales:", error);
     res.status(500).json({ message: "Error al obtener señales" });
   }
+}; */
+
+module.exports.getSignal = async (req, res) => {
+  try {
+    const signals = await Signal.find().sort({ numberChannelSur: 1 }).populate("contact"); // 1 = ascendente
+    res.status(200).json(signals);
+  } catch (error) {
+     console.error("Error al obtener señales:", error);
+    res.status(500).json({ message: "Error al obtener señales" });
+  }
 };
+
 
 module.exports.getIdSignal = async (req, res) => {
   try {
