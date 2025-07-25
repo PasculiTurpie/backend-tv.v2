@@ -6,23 +6,28 @@ const UserSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+      tirm: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      tirm: true,
     },
     profilePicture: {
       type: String,
       default: "https://i.ibb.co/GQzZ3wBJ/profile-default.png",
+      tirm: true,
     },
     password: {
       type: String,
       required: true,
+      tirm: true,
     },
     role: {
       type: String,
       default: "admin",
+      tirm: true,
     },
   },
   { timestamps: true, versionKey: false }
