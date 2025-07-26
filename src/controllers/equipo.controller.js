@@ -19,7 +19,7 @@ module.exports.createEquipo = async (req, res) => {
 
 module.exports.getEquipo = async (req, res) => {
   try {
-    const equipo = await Equipo.find().populate("tipoNombre");
+    const equipo = await Equipo.find().sort({ nombre : 1 }).populate("tipoNombre");
     res.json(equipo)
   } catch (error) {
     console.log(error);

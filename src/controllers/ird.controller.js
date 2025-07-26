@@ -3,7 +3,7 @@ const IRD = require('../models/ird.model');
 
 module.exports.getIrd = async (req, res, next) => {
   try {
-    const ird = await IRD.find();
+    const ird = await IRD.find().sort({ ipAdminIrd :1});
     res.json(ird);
   } catch (error) {
     res.status(404).json({ message: 'Error al obtener ird`s' });

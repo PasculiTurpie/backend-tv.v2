@@ -3,7 +3,7 @@ const TipoEquipo = require('../models/tipoEquipo')
 
 module.exports.getTipoEquipo = async (req, res) => {
   try {
-    const tipoEquipo = await TipoEquipo.find();
+    const tipoEquipo = await TipoEquipo.find().sort({ tipoNombre: 1 });
     res.json(tipoEquipo);
   } catch (error) {
     console.log(error);
