@@ -8,12 +8,12 @@ const ChannelSchema = new mongoose.Schema(
       tirm: true,
     },
     numberChannelSur: {
-      type: String,
+      type: Number,
       required: true,
       tirm: true,
     },
     numberChannelCn: {
-      type: String,
+      type: Number,
       required: true,
       tirm: true,
     },
