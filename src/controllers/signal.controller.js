@@ -92,3 +92,11 @@ module.exports.deleteSignal = async (req, res) => {
     res.status(500).json({ message: "Error del servidor" });
   }
 };
+
+module.exports.searchSignal = async (req, res) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+}
