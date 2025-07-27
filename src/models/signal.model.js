@@ -8,12 +8,12 @@ const SignalSchema = new mongoose.Schema(
       tirm: true,
     },
     numberChannelSur: {
-      type: Number,
+      type: String,
       required: true,
       tirm: true,
     },
     numberChannelCn: {
-      type: Number,
+      type: String,
       required: true,
       tirm: true,
     },
