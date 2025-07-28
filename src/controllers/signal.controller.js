@@ -93,10 +93,39 @@ module.exports.deleteSignal = async (req, res) => {
   }
 };
 
-module.exports.searchSignal = async (req, res) => {
+
+module.exports.searchSignals = async (req, res) => {
+  const { keyword } = req.query;
+
+  if (!keyword) return res.status(400).json({ message: "Parámetro 'keyword' requerido" });
+
   try {
-    
+    const isNumber = !isNaN(keyword);
+    const regex = new RegExp(keyword, "i");
+
+    // Si es número, comparamos con el valor exacto también
+    const query = isNumber
+      ? {
+          $or: [
+            { nameChannel: regex },
+            { numberChannelSur: keyword }, // número exacto
+            { numberChannelCn: keyword },
+          ],
+        }
+      : {
+          $or: [
+            { nameChannel: regex },
+            { numberChannelSur: regex },
+            { numberChannelCn: regex },
+          ],
+        };
+
+    const results = await Signal.find(query);
+
+    res.json(results);
   } catch (error) {
-    
+    console.error("Error en búsqueda:", error);
+    res.status(500).json({ message: "Error al buscar señales" });
   }
-}
+};
+

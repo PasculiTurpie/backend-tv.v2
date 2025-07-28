@@ -6,28 +6,28 @@ const UserSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      tirm: true,
+      trim: true,
     },
     profilePicture: {
       type: String,
       default: "https://i.ibb.co/GQzZ3wBJ/profile-default.png",
-      tirm: true,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     role: {
       type: String,
       default: "admin",
-      tirm: true,
+      trim: true,
     },
   },
   { timestamps: true, versionKey: false }

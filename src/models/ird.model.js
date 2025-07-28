@@ -4,87 +4,88 @@ const IrdSchema = new mongoose.Schema(
   {
     urlIrd: {
       type: String,
-      default:"https://i.ibb.co/pvW06r6K/ird-motorola.png"
+      default:"https://i.ibb.co/pvW06r6K/ird-motorola.png",
+      trim:true
     },
     ipAdminIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     marcaIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     modelIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     versionIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     uaIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     tidReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     typeReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     feqReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     symbolRateIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     fecReceptorIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     modulationReceptorIrd: {
       type: String,
-      tirm:true
+      trim:true
     },
     rellOfReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     nidReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     cvirtualReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     vctReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     outputReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     multicastReceptor: {
       type: String,
-      tirm:true
+      trim:true
     },
     ipVideoMulticast: {
       type: String,
-      tirm:true
+      trim:true
     },
     locationRow: {
       type: String,
-      tirm:true
+      trim:true
     },
     locationCol: {
       type: String,
-      tirm:true
+      trim:true
     },
   },
   { timestamps: true, versionKey: false }

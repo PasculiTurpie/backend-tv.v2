@@ -5,22 +5,22 @@ const RtesVmxSchema = new mongoose.Schema(
     nombreRtesVmx: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     urlRtes: {
       type: String,
       default: "https://i.ibb.co/sSnvD0G/vmx-encryptor.png",
-      tirm: true,
+      trim: true,
     },
     mcastIn: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     mcastOut: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
   },
   { timestamps: true, versionKey: false }

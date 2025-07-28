@@ -5,7 +5,7 @@ const PolarizationSchema = new mongoose.Schema(
     typePolarization: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
   },
   { timestamps: true, versionKey: false }

@@ -7,6 +7,7 @@ router.get("/signal/:id", Signal.getIdSignal);
 router.post('/signal', Signal.createSignal);
 router.put("/signal/:id", Signal.updateSignal);
 router.delete("/signal/:id", Signal.deleteSignal);
+router.get('/search', Signal.searchSignals)
 
 
 module.exports = router

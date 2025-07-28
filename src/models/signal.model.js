@@ -5,41 +5,41 @@ const SignalSchema = new mongoose.Schema(
     nameChannel: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     numberChannelSur: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     numberChannelCn: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     logoChannel: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     severidadChannel: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     tipoServicio: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     tipoTecnologia: {
       type: String,
       required: true,
-      tirm: true,
+      trim: true,
     },
     source: {
       type: String,
-      tirm: true,
+      trim: true,
     },
     contact: [
       {

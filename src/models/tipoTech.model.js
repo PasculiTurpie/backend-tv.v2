@@ -7,7 +7,7 @@ const TipoTechSchema = new mongoose.Schema(
       type: String,
       require: true,
       unique: true,
-      tirm: true,
+      trim: true,
     },
   },
   { timestamps: true, versionKey: false }
