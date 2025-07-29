@@ -32,7 +32,7 @@ module.exports.getEquipo = async (req, res) => {
 module.exports.getIdEquipo = async (req, res) => {
   try {
     const { id } = req.params;
-    const equipo = await Equipo.findById(id);
+    const equipo = await Equipo.findById(id).populate("tipoNombre");;
     if (!equipo)
       return res.status(404).json({ message: "Equipo no encontrado" });
     res.json(equipo);
@@ -45,17 +45,25 @@ module.exports.getIdEquipo = async (req, res) => {
 module.exports.updateEquipo = async (req, res) => {
   try {
     const id = req.params.id;
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID no válido" });
+    }
+
     const equipo = await Equipo.findByIdAndUpdate(id, req.body, {
       new: true,
-    });
-    if (!equipo)
+    }).populate("tipoNombre");
+
+    if (!equipo) {
       return res.status(404).json({ message: "Equipo no encontrado" });
+    }
+
     res.json(equipo);
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar equipo:", error);
     res.status(500).json({ message: "Error al actualizar equipo" });
   }
-}
+};
+
 
 module.exports.deleteEquipo= async (req, res) => {
   console.log(req.params);
