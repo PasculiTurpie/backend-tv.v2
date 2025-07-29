@@ -120,7 +120,7 @@ module.exports.searchSignals = async (req, res) => {
           ],
         };
 
-    const results = await Signal.find(query);
+    const results = await Signal.find(query).populate("contact");
 
     res.json(results);
   } catch (error) {
