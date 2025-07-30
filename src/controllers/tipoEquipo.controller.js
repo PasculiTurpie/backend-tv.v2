@@ -6,8 +6,8 @@ module.exports.getTipoEquipo = async (req, res) => {
     const tipoEquipo = await TipoEquipo.find().sort({ tipoNombre: 1 });
     res.json(tipoEquipo);
   } catch (error) {
-    console.log(error);
-    res.send(404).json({ message: `Error al encontrar Tipo Equipo` });
+    console.error("Error al obtener tipos de equipo:", error);
+    res.status(500).json({ message: "Error al obtener tipos" });
   }
 }
 
