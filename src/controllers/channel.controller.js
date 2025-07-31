@@ -77,3 +77,19 @@ module.exports.deleteChannel = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar el canal", error: error.message });
   }
 };
+
+/* UPDATE CHANNEL */
+
+exports.updateChannelFlow = async (req, res) => {
+  try {
+    const { nodes, edges } = req.body;
+    const updatedChannel = await Channel.findByIdAndUpdate(
+      req.params.id,
+      { nodes, edges },
+      { new: true }
+    );
+    res.json(updatedChannel);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

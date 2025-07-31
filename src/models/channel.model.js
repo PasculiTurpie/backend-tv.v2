@@ -32,6 +32,31 @@ const ChannelSchema = new mongoose.Schema(
       ref: "TipoTech",
       tirm: true,
     },
+     nodes: [
+      {
+        id: String,
+        type: String,
+        position: {
+          x: Number,
+          y: Number,
+        },
+         data: {
+           label: String,
+           image:String,
+        },
+      },
+    ],
+    edges: [
+      {
+        id: String,
+        source: String,
+        target: String,
+        sourceHandle: String,
+        targetHandle: String,
+        type: String,
+        label: String,
+      },
+    ],
     contact: [
       {
         type: mongoose.Schema.Types.ObjectId,
