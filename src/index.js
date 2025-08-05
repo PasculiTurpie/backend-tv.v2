@@ -7,7 +7,7 @@ const Satellite = require("./routes/satellite.routes");
 const Polarization = require("./routes/polarization.routes");
 const Login = require("./routes/login.routes");
 const Logout = require("./routes/logout.routes");
-const VerifySession = require("./routes/verifyToken.routes");
+/* const VerifySession = require("./routes/verifyToken.routes"); */
 const Conmutador = require('./routes/conmutador.routes');
 const Dcm = require('./routes/dcm.routes')
 const Titan = require('./routes/titan.routes')
@@ -21,7 +21,7 @@ const Tech = require('./routes/tipoTech.routes')
 const Nodo = require('./routes/node.routes')
 const Equipo = require('./routes/equipo.routes')
 const TipoEquipo  = require('./routes/tipoEquipo.routes')
-const errorHandler = require("./middleware/errorHandler");
+/* const errorHandler = require("./middleware/errorHandler"); */
 const morgan = require("morgan");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
@@ -61,7 +61,6 @@ app.use(
 
 app.use(
   "/api/v2",
-  VerifySession,
   Login,
   Logout,
   User,
@@ -81,7 +80,7 @@ app.use(
   Nodo,
   Equipo,
   TipoEquipo,
-  errorHandler
+/*   errorHandler */
 );
 
 app.listen(PORT, () => {

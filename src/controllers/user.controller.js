@@ -1,5 +1,4 @@
 const User = require("../models/users.model");
-const bcrypt = require("bcrypt");
 
 module.exports.getAllUser = async (req, res) => {
   try {
@@ -12,7 +11,6 @@ module.exports.getAllUser = async (req, res) => {
     return res.status(500).json({ message: "Error al obtener usuarios" });
   }
 };
-
 
 module.exports.getUserId = async (req, res) => {
   try {
@@ -30,14 +28,12 @@ module.exports.createUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Validar campos requeridos antes de consultar a la base de datos
     if (!username || !email || !password) {
       return res
         .status(400)
         .json({ message: "Falta el nombre, correo o contraseña" });
     }
 
-    // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
@@ -45,14 +41,10 @@ module.exports.createUser = async (req, res) => {
         .json({ message: "Usuario ya existe con ese correo" });
     }
 
-    // Hashear la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crear y guardar nuevo usuario
     const newUser = new User({
       username,
       email,
-      password: hashedPassword,
+      password,
     });
 
     const savedUser = await newUser.save();
@@ -74,7 +66,6 @@ module.exports.createUser = async (req, res) => {
 };
 
 module.exports.deleteUser = async (req, res) => {
-  console.log(req.params);
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user)
@@ -86,11 +77,8 @@ module.exports.deleteUser = async (req, res) => {
   }
 };
 
-
-
 module.exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  console.log(id)
   const updateData = { ...req.body };
 
   // Eliminar password y confirmPassword si están vacíos

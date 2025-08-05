@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
     },
     profilePicture: {
       type: String,
@@ -45,13 +46,14 @@ UserSchema.pre("save", async function (next) {
 UserSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate();
 
-  if (update.password) {
+  if (update.password && !update.password.startsWith("$2b$")) {
     const salt = await bcrypt.genSalt(10);
     update.password = await bcrypt.hash(update.password, salt);
   }
 
   next();
 });
+
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
