@@ -1,11 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const Titan = require('../controllers/titan.controller')
+const Titan = require('../controllers/titan.controller');
+const { authProfile } = require('../middleware/validateToken');
 
-router.get('/titan', Titan.getTitan)
-router.get("/titan/:id", Titan.getIdTitan);
-router.post('/titan', Titan.createtitan)
-router.put("/titan/:id", Titan.updateTitan);
-router.delete("/titan/:id", Titan.deleteTitan);
+router.get('/titan',authProfile, Titan.getTitan)
+router.get("/titan/:id",authProfile, Titan.getIdTitan);
+router.post('/titan',authProfile, Titan.createtitan)
+router.put("/titan/:id",authProfile, Titan.updateTitan);
+router.delete("/titan/:id", authProfile, Titan.deleteTitan);
 
 module.exports = router

@@ -1,13 +1,14 @@
 const express = require('express')
 const router = express.Router()
 const Channel = require('../controllers/channel.controller')
+const { authProfile } = require('../middleware/validateToken')
 
-router.get('/channel', Channel.getChannel)
-router.get('/channel/:id', Channel.getChannelId )
-router.post('/channel', Channel.createChannel)
-router.put('/channel/:id', Channel.updateChannel)
-router.delete('/channel/:id', Channel.deleteChannel)
-router.patch("/:id/flow", Channel.updateChannelFlow);
+router.get('/channel',authProfile, Channel.getChannel)
+router.get("/channel/:id", authProfile, Channel.getChannelId);
+router.post("/channel", authProfile, Channel.createChannel);
+router.put("/channel/:id", authProfile, Channel.updateChannel);
+router.delete("/channel/:id", authProfile, Channel.deleteChannel);
+router.patch("/:id/flow", authProfile, Channel.updateChannelFlow);
 
 
 module.exports = router;

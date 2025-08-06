@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Satellite = require('../controllers/satellite.controller');
-const auth = require('../config/auth');
+const { authProfile } = require('../middleware/validateToken');
 
-router.get('/satelite', Satellite.getSatellites);
-router.get('/satelite/:id',  Satellite.getSatelliteById);
-router.post('/satelite', Satellite.postSatellite);
-router.put('/satelite/:id',  Satellite.updateSatellite);
-router.delete('/satelite/:id',  Satellite.deleteSatellite);
+router.get("/satelite", authProfile, Satellite.getSatellites);
+router.get('/satelite/:id',authProfile,  Satellite.getSatelliteById);
+router.post('/satelite',authProfile, Satellite.postSatellite);
+router.put("/satelite/:id", authProfile, Satellite.updateSatellite);
+router.delete('/satelite/:id',authProfile,  Satellite.deleteSatellite);
 
 module.exports = router;
