@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Polarization = require('../controllers/polarization.controller');
-const auth = require('../config/auth');
 const { authProfile } = require('../middleware/validateToken');
 
 

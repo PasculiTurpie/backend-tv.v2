@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const auth = require('../config/auth');
 const Conmutador =require('../controllers/conmutador.controller');
 const { authProfile } = require("../middleware/validateToken");
 

@@ -33,6 +33,7 @@ module.exports.login = async (req, res) => {
         secure: process.env.NODE_ENV === "production",
         maxAge: 1000 * 60 * 60 * 24, // 1 día
       })
+      .status(200)
       .json({
         token,
         message: "Usuario logueado correctamente",
