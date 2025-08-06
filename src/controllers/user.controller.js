@@ -106,3 +106,17 @@ module.exports.updateUser = async (req, res) => {
     res.status(500).json({ message: "Error al actualizar usuario" });
   }
 };
+
+
+module.exports.getUserById = async (req, res) => {
+  try {
+    const user = await findUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+    res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error al obtener el usuario." });
+  }
+};

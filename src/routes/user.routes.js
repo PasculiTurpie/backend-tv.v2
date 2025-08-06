@@ -9,5 +9,7 @@ router.post("/user", authProfile, User.createUser);
 router.delete("/user/:id", authProfile, User.deleteUser);
 router.put("/user/:id", authProfile, User.updateUser);
 
+router.get("/me", authProfile, User.getUserById);
+
 
 module.exports = router;

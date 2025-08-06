@@ -24,27 +24,15 @@ module.exports.login = async (req, res) => {
       { id: _id, username, role },
       process.env.SECRET_KEY,
       { expiresIn: "1d" }
-    );
+    )
+    res.cookie("access_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  })
+  .status(200)
+  .json({ message: "Autenticado correctamente", user });
 
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 1000 * 60 * 60 * 24, // 1 día
-      })
-      .status(200)
-      .json({
-        token,
-        message: "Usuario logueado correctamente",
-        user: {
-          id: _id,
-          username,
-          profilePicture,
-          email,
-          role,
-        },
-      });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Error interno del servidor" });
