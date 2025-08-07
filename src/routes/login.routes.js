@@ -4,7 +4,8 @@ const router = express.Router();
 const { authProfile } = require('../middleware/validateToken');
 
 
-router.post("/login", User.login);
-router.get("/logout",authProfile, User.logout);
+router.post("/auth/login", User.login);
+router.post("/auth/logout",authProfile, User.logout);
+router.get("/auth/profile", authProfile, User.profile);
 
 module.exports = router;

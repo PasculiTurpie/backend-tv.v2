@@ -31,9 +31,9 @@ require("./config/config.mongoose");
 const PORT = process.env.PORT;
 
 const app = express();
+app.use(cookieParser());
 
 app.use(express.json());
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
@@ -58,6 +58,30 @@ app.use(
     credentials: true, // Habilita el envío de cookies si es necesario
   })
 );
+
+// Rutas de autenticación
+app.use("/api/v2/auth", Login); // ej: POST /api/v2/auth/login
+app.use("/api/v2/auth", Logout); // ej: POST /api/v2/auth/logout
+
+
+// Rutas de recursos
+app.use("/api/v2/users", User);
+app.use("/api/v2/irds", Ird);
+app.use("/api/v2/satellites", Satellite);
+app.use("/api/v2/polarizations", Polarization);
+app.use("/api/v2/conmutadores", Conmutador);
+app.use("/api/v2/dcms", Dcm);
+app.use("/api/v2/titans", Titan);
+app.use("/api/v2/dcm-vmx", DcmVmx);
+app.use("/api/v2/rtes-vmx", RtesVmx);
+app.use("/api/v2/routers-asr", RouterAsr);
+app.use("/api/v2/contacts", Contact);
+app.use("/api/v2/channels", Channel);
+app.use("/api/v2/techs", Tech);
+app.use("/api/v2/nodes", Nodo);
+app.use("/api/v2/equipos", Equipo);
+app.use("/api/v2/tipos-equipo", TipoEquipo);
+app.use("/api/v2/signals", Signal);
 
 app.use(
   "/api/v2",

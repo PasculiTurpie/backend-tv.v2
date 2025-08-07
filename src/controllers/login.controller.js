@@ -18,7 +18,7 @@ module.exports.login = async (req, res) => {
       return res.status(401).send({ message: "Contraseña incorrecta" });
     }
 
-    const { _id, username, profilePicture, role } = user;
+    const { _id, username, role } = user;
 
     const token = jwt.sign(
       { id: _id, username, role },
@@ -41,20 +41,26 @@ module.exports.login = async (req, res) => {
 
 module.exports.logout = (req, res) => {
   try {
-    res.clearCookie("access_token");
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Solo en producción
+      sameSite: "Strict",
+    });
     return res.json({ message: "Sesión cerrada con éxito" });
   } catch (error) {
+    console.error("Error en logout:", error);
     return res.status(500).json({ message: "No se ha podido cerrar sesión" });
   }
 };
 
 module.exports.profile = async (req, res) => {
-  const userFound = await User.findById(req.user.id)
-  if (!userFound) return res.status(400).json({ message: "Usuartio no encontrado" })
-  
-  return res.json({
-    id: userFound._id,
-    username: userFound.username,
-    email:userFound.email
-  });
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    return res.json(user);
+  } catch (error) {
+    return res.status(500).json({ message: "Error al obtener el perfil" });
   }
+};
