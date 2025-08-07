@@ -5,7 +5,7 @@ module.exports.createChannel = async (req, res) => {
   try {
     const channel = new Channel(req.body);
     await channel.save();
-    console.log(channel);
+    
     res.status(200).json(channel);
   } catch (error) {
     if (error.code === 11000) {

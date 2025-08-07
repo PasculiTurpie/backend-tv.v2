@@ -58,7 +58,7 @@ module.exports.updateSatellite = async (req, res) => {
 };
 
 module.exports.deleteSatellite = async (req, res) => {
-  console.log(req.params);
+  
   try {
     const satellite = await Satellite.findByIdAndDelete(req.params.id);
     if (!satellite)

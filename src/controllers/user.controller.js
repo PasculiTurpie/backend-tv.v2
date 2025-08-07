@@ -2,9 +2,9 @@ const User = require("../models/users.model");
 
 module.exports.getAllUser = async (req, res) => {
   try {
-    console.log("Buscando usuarios...");
+    
     const users = await User.find().sort({ name: 1 });
-    console.log("Usuarios encontrados, enviando respuesta");
+    
     return res.json(users);
   } catch (error) {
     console.error("Error capturado en catch:", error.message);

@@ -5,7 +5,7 @@ module.exports.getConmutador = async (req, res) => {
     const conmutador = await Conmutador.find();
     res.json(conmutador);
   } catch (error) {
-    console.log(error);
+    
     res.send(404).json({ message: `Error al encontrar switch` });
   }
 };
@@ -15,7 +15,7 @@ module.exports.getIdConmutador = async (req, res) => {
     const conmutador = await Conmutador.findById(id)
     res.json(conmutador);
   } catch (error) {
-    console.log(error);
+    
     res.send(404).json({ message: `Error al encontrar switch` });
   }
 };
@@ -27,7 +27,7 @@ module.exports.createConmutador = async (req, res) => {
     } catch (error) {
         if (error.code === 11000) {
             const field = Object.values(error.keyValue).join(", ");
-            console.log(field);
+            
           return res.status(400).json({
             message: `Ya existe el switch ${field}`
           });

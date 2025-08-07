@@ -4,7 +4,7 @@ module.exports.createEquipo = async (req, res) => {
   try {
     const equipo = new Equipo(req.body)
     await equipo.save()
-    console.log(equipo)
+    
     res.status(200).json(equipo);
   } catch (error) {
     if (error.code === 11000) {
@@ -24,7 +24,7 @@ module.exports.getEquipo = async (req, res) => {
       .sort({ nombre: 1 });
     res.json(equipo)
   } catch (error) {
-    console.log(error);
+    
     res.send(404).json({ message: `Error al encontrar equipos` });
   }
 }
@@ -66,7 +66,7 @@ module.exports.updateEquipo = async (req, res) => {
 
 
 module.exports.deleteEquipo= async (req, res) => {
-  console.log(req.params);
+  
   try {
     const equipo = await Equipo.findByIdAndDelete(req.params.id);
     if (!equipo)

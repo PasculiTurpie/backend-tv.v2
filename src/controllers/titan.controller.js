@@ -6,7 +6,7 @@ module.exports.getTitan = async (req, res) =>{
         const titan = await Titan.find();
         res.json(titan)        
     } catch (error) {
-        console.log(error)
+        
         res.send(404).json({message:`Error al encontrar Titan`})
     }
 }

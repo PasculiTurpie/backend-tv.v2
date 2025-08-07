@@ -6,7 +6,7 @@ module.exports.getDcmVmx = async (req, res) =>{
         const dcmVmx = await DcmVmx.find();
         res.json(dcmVmx)        
     } catch (error) {
-        console.log(error)
+        
         res.send(404).json({message:`Error al encontrar Dcm Vmx`})
     }
 }

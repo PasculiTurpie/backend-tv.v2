@@ -8,7 +8,7 @@ module.exports.createContact = async (req, res) => {
   } catch (error) {
     if (error.code === 11000) {
       const field = Object.values(error.keyValue).join(", ");
-      console.log(field);
+      
       return res.status(400).json({
         message: `Ya existe ${field}`,
       });
