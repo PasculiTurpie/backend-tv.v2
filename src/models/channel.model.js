@@ -1,73 +1,84 @@
 const mongoose = require("mongoose");
 
+const NodeSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    default: "default",
+  },
+  position: {
+    x: {
+      type: Number,
+      required: true,
+    },
+    y: {
+      type: Number,
+      required: true,
+    },
+  },
+  data: {
+    label: {
+      type: String,
+      required: true,
+    },
+    image: String,
+    // Puedes añadir más campos aquí para info extra
+  },
+});
+
+const EdgeSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+  },
+  source: {
+    type: String,
+    required: true,
+  },
+  target: {
+    type: String,
+    required: true,
+  },
+  sourceHandle: String,
+  targetHandle: String,
+  type: {
+    type: String,
+    default: "default",
+  },
+  label: String,
+});
+
 const ChannelSchema = new mongoose.Schema(
   {
-    nameChannel: {
-      type: String,
-      required: true,
-      tirm: true,
-    },
-    numberChannelSur: {
-      type: Number,
-      required: true,
-      tirm: true,
-    },
-    numberChannelCn: {
-      type: Number,
-      required: true,
-      tirm: true,
-    },
-    logoChannel: {
-      type: String,
-      required: true,
-      tirm: true,
-    },
-    severidadChannel: {
-      type: String,
-      required: true,
-      tirm: true,
-    },
-    tipoTecnologia: {
+    signal: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "TipoTech",
-      tirm: true,
+      ref: "Signal",
+      required: true,
     },
-     nodes: [
-      {
-        id: String,
-        type: String,
-        position: {
-          x: Number,
-          y: Number,
-        },
-         data: {
-           label: String,
-           image:String,
-        },
-      },
-    ],
-    edges: [
-      {
-        id: String,
-        source: String,
-        target: String,
-        sourceHandle: String,
-        targetHandle: String,
-        type: String,
-        label: String,
-      },
-    ],
-    contact: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Contact",
-        tirm: true,
-      },
-    ],
+    nodes: [NodeSchema],
+    edges: [EdgeSchema],
   },
   { timestamps: true, versionKey: false }
 );
 
-ChannelSchema.index({ nameChannel: 1, tipoTecnologia: 1 }, { unique: true });
+ChannelSchema.pre("validate", function(next) {
+  const nodeIds = this.nodes.map((node) => node.id);
+  
+  for (const edge of this.edges) {
+    if (!nodeIds.includes(edge.source)) {
+      return next(new Error(`Edge source "${edge.source}" does not exist in nodes`));
+    }
+    if (!nodeIds.includes(edge.target)) {
+      return next(new Error(`Edge target "${edge.target}" does not exist in nodes`));
+    }
+  }
+  
+  next();
+});
+
+
 const Channel = mongoose.model("Channel", ChannelSchema);
 module.exports = Channel;

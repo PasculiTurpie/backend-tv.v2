@@ -65,7 +65,7 @@ app.use("/api/v2/auth", Logout); // ej: POST /api/v2/auth/logout
 
 
 // Rutas de recursos
-app.use("/api/v2/users", User);
+/* app.use("/api/v2/users", User);
 app.use("/api/v2/irds", Ird);
 app.use("/api/v2/satellites", Satellite);
 app.use("/api/v2/polarizations", Polarization);
@@ -81,7 +81,7 @@ app.use("/api/v2/techs", Tech);
 app.use("/api/v2/nodes", Nodo);
 app.use("/api/v2/equipos", Equipo);
 app.use("/api/v2/tipos-equipo", TipoEquipo);
-app.use("/api/v2/signals", Signal);
+app.use("/api/v2/signals", Signal); */
 
 app.use(
   "/api/v2",

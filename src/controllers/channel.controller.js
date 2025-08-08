@@ -5,30 +5,49 @@ module.exports.createChannel = async (req, res) => {
   try {
     const channel = new Channel(req.body);
     await channel.save();
-    
-    res.status(200).json(channel);
+    res.status(201).json(channel);
   } catch (error) {
-    if (error.code === 11000) {
-      const field = Object.values(error.keyValue).join(", ");
-      return res.status(400).json({
-        message: `Ya existe un canal con la misma combinación de ${field}`,
-      });
-    }
-    console.error(error);
-    res.status(501).json({ message: `Error al crear Canal`, error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
 // Obtener todos los canales
-module.exports.getChannel = async (req, res) => {
+module.exports.getChannel =  async (req, res) => {
   try {
-    const channels = await Channel.find().populate('contact', 'tipoTecnologia');
-    res.status(200).json(channels);
+    const channels = await Channel.find().populate('signal');
+    res.json(channels);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al obtener los canales", error: error.message });
+    res.status(500).json({ error: error.message });
+  }
+}
+
+module.exports.updateChannel = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { signal, nodes, edges } = req.body;
+
+    // Actualiza el documento Channel
+    const updated = await Channel.findByIdAndUpdate(
+      id,
+      { signal, nodes, edges },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "Channel no encontrado" });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
+
+
+
+
+
+/* +++++++++++++++++++++++++++++++ */
 
 // Obtener canal por ID
 module.exports.getChannelId = async (req, res) => {
@@ -46,22 +65,7 @@ module.exports.getChannelId = async (req, res) => {
 };
 
 // Actualizar canal
-module.exports.updateChannel = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const updatedChannel = await Channel.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!updatedChannel) {
-      return res.status(404).json({ message: "Canal no encontrado para actualizar" });
-    }
-    res.status(200).json(updatedChannel);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al actualizar el canal", error: error.message });
-  }
-};
+
 
 // Eliminar canal
 module.exports.deleteChannel = async (req, res) => {
