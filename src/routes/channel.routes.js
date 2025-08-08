@@ -5,6 +5,7 @@ const { authProfile } = require('../middleware/validateToken')
 
 router.post('/channels', Channel.createChannel)
 router.get('/channels', Channel.getChannel)
+router.get('/channels/:id', Channel.getChannelId)
 router.put('/channels/:id', Channel.updateChannel)
 
 

@@ -14,7 +14,7 @@ module.exports.createChannel = async (req, res) => {
 // Obtener todos los canales
 module.exports.getChannel =  async (req, res) => {
   try {
-    const channels = await Channel.find().populate('signal');
+    const channels = await Channel.find().populate('signal contact');
     res.json(channels);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -43,26 +43,30 @@ module.exports.updateChannel = async (req, res) => {
   }
 };
 
+module.exports.getChannelId = async (req, res) => {
+  try {
+    const channel = await Channel.findById(req.params.id).populate({
+      path: 'signal',
+      populate: {
+        path: 'contact'
+      }
+    });
 
+    if (!channel) {
+      return res.status(404).json({ error: 'Channel not found' });
+    }
+
+    res.json(channel);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 
 
 
 /* +++++++++++++++++++++++++++++++ */
 
 // Obtener canal por ID
-module.exports.getChannelId = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const channel = await Channel.findById(id).populate('contact', 'tipoTecnologia');
-    if (!channel) {
-      return res.status(404).json({ message: "Canal no encontrado" });
-    }
-    res.status(200).json(channel);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al obtener el canal", error: error.message });
-  }
-};
 
 // Actualizar canal
 
