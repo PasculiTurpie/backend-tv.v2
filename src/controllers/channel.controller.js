@@ -14,7 +14,12 @@ module.exports.createChannel = async (req, res) => {
 // Obtener todos los canales
 module.exports.getChannel =  async (req, res) => {
   try {
-    const channels = await Channel.find().populate('signal contact');
+    const channels = await Channel.find().populate({
+      path: 'signal',
+      populate: {
+        path: 'contact'
+      }
+    });
     res.json(channels);
   } catch (error) {
     res.status(500).json({ error: error.message });
