@@ -26,12 +26,11 @@ module.exports.getChannel =  async (req, res) => {
   }
 }
 
-module.exports.updateChannel = async (req, res) => {
+exports.updateChannel = async (req, res) => {
   try {
     const { id } = req.params;
     const { signal, nodes, edges } = req.body;
 
-    // Actualiza el documento Channel
     const updated = await Channel.findByIdAndUpdate(
       id,
       { signal, nodes, edges },
@@ -43,8 +42,8 @@ module.exports.updateChannel = async (req, res) => {
     }
 
     res.json(updated);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
