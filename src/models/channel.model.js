@@ -7,7 +7,7 @@ const NodeSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    default: "default",
+    default: "image",
   },
   position: {
     x: {
