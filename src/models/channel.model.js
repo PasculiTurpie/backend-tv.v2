@@ -9,6 +9,11 @@ const NodeSchema = new mongoose.Schema({
     type: String,
     default: "image",
   },
+  equipo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Equipo",
+    required:true,
+  },
   position: {
     x: {
       type: Number,
