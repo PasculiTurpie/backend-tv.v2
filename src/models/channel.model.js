@@ -52,7 +52,7 @@ const EdgeSchema = new mongoose.Schema({
     default:"smoothstep"
   },
   animated:{
-    type:String,
+    type:Boolean,
     default:true,
   },
   style: {

@@ -14,12 +14,15 @@ module.exports.createChannel = async (req, res) => {
 // Obtener todos los canales
 module.exports.getChannel =  async (req, res) => {
   try {
-    const channels = await Channel.find()
-      .lean()
-      .populate({
+    const channels = await Channel.find().populate({
         path: "signal",
-        populate: [{ path: "contact" }, { path: "equipo" }],
-      });
+        populate: [{ path: "contact" }],
+      })
+      .populate({
+        path: "nodes",
+        populate: [{ path: "equipo" }],
+      })
+      .lean();
     res.json(channels);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -54,7 +57,10 @@ module.exports.getChannelId = async (req, res) => {
         path: "signal",
         populate: [{ path: "contact" }],
       })
-      .populate({ path: "nodes.equipo" })
+      .populate({
+        path: "nodes",
+        populate: [{ path: "equipo" }],
+      })
       .lean();
 
     if (!channel) {
