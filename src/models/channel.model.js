@@ -19,7 +19,7 @@ const NodeSchema = new mongoose.Schema({
       type: Number,
       required: true,
     },
-    y: {
+    y: { 
       type: Number,
       required: true,
     },

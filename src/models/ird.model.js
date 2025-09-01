@@ -4,88 +4,94 @@ const IrdSchema = new mongoose.Schema(
   {
     urlIrd: {
       type: String,
-      default:"https://i.ibb.co/pvW06r6K/ird-motorola.png",
-      trim:true
+      default: "https://i.ibb.co/pvW06r6K/ird-motorola.png",
+      trim: true,
+    },
+    nombreIrd: {
+      type: String,
+      unique: true,
+      trim: true,
     },
     ipAdminIrd: {
       type: String,
-      trim:true
+      unique: true,
+      trim: true,
     },
     marcaIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     modelIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     versionIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     uaIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     tidReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     typeReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     feqReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     symbolRateIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     fecReceptorIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     modulationReceptorIrd: {
       type: String,
-      trim:true
+      trim: true,
     },
     rellOfReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     nidReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     cvirtualReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     vctReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     outputReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     multicastReceptor: {
       type: String,
-      trim:true
+      trim: true,
     },
     ipVideoMulticast: {
       type: String,
-      trim:true
+      trim: true,
     },
     locationRow: {
       type: String,
-      trim:true
+      trim: true,
     },
     locationCol: {
       type: String,
-      trim:true
+      trim: true,
     },
   },
   { timestamps: true, versionKey: false }
