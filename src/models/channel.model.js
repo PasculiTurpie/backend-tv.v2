@@ -47,16 +47,16 @@ const EdgeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  type:{
-    type:String,
-    default:"smoothstep"
+  type: {
+    type: String,
+    default: "smoothstep",
   },
-  animated:{
-    type:Boolean,
-    default:true,
+  animated: {
+    type: Boolean,
+    default: true,
   },
   style: {
-    stroke: { type: String, default: "red" }
+    stroke: { type: String, default: "red" },
   },
   sourceHandle: String,
   targetHandle: String,
