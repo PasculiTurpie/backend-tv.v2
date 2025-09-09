@@ -32,12 +32,13 @@ module.exports.createEquipo = async (req, res) => {
 
     // 2) Mapeo flexible de campos (acepta variantes desde el frontend)
     const doc = {
-      nombre: p.nombre ?? p.nombreIrd ?? p.nombreEquipo,
-      marca: p.marca ?? p.marcaIrd ?? p.marcaEquipo,
-      modelo: p.modelo ?? p.modelIrd ?? p.modelEquipo,
-      ip_gestion: p.ip_gestion ?? p.ipAdminIrd ?? p.ipAdminEquipo ?? null,
+      nombre: p.nombre ?? p.nombreEquipo,
+      marca: p.marca ?? p.marcaEquipo,
+      modelo: p.modelo ?? p.modelEquipo,
+      ip_gestion: p.ip_gestion ?? p.ipAdminEquipo ?? null,
       tipoNombre: tipoNombreId,
-      irdRef: p.irdRef || undefined, // opcional, por si lo guardas
+      irdRef: p.irdRef || undefined,
+      satelliteRef: p.satelliteRef || undefined, // <<--- AÑADIR ESTO
     };
 
     // 3) Validación mínima (según tu Schema: nombre, marca, modelo, tipoNombre)
@@ -81,6 +82,10 @@ module.exports.getEquipo = async (req, res) => {
     const equipos = await Equipo.find()
       .populate("tipoNombre")
       .populate("irdRef")
+      .populate({
+        path: "satelliteRef",
+        populate: [{ path: "satelliteType", select: "typePolarization" }],
+      })
       .lean();
     res.json(equipos);
   } catch (error) {
@@ -89,16 +94,18 @@ module.exports.getEquipo = async (req, res) => {
   }
 };
 
-
-
-
 module.exports.getIdEquipo = async (req, res) => {
   try {
     const { id } = req.params;
     const equipo = await Equipo.findById(id)
       .populate("tipoNombre")
       .populate("irdRef")
+      .populate({
+        path: "satelliteRef",
+        populate: [{ path: "satelliteType", select: "typePolarization" }],
+      })
       .lean();
+
     if (!equipo) {
       return res.status(404).json({ message: "Equipo no encontrado" });
     }
@@ -122,6 +129,8 @@ module.exports.updateEquipo = async (req, res) => {
     if (patch.irdRef !== undefined) {
       patch.irdRef = await resolveIrdRef(patch.irdRef);
     }
+    // si te pasan un id de satélite, lo dejas tal cual (ObjectId string)
+    // o resuelves al ObjectId según tu helper si lo necesitas.
 
     if (patch.nombre) patch.nombre = String(patch.nombre).trim();
     if (patch.marca) patch.marca = String(patch.marca).trim();
@@ -134,6 +143,10 @@ module.exports.updateEquipo = async (req, res) => {
     })
       .populate("tipoNombre")
       .populate("irdRef")
+      .populate({
+        path: "satelliteRef",
+        populate: [{ path: "satelliteType", select: "typePolarization" }],
+      })
       .lean();
 
     if (!updated) {

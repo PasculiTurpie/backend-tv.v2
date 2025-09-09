@@ -14,9 +14,21 @@ module.exports.createChannel = async (req, res) => {
 // Obtener todos los canales
 module.exports.getChannel =  async (req, res) => {
   try {
-    const channels = await Channel.find().populate({
+    const channels = await Channel.find()
+      .populate({
         path: "signal",
         populate: [{ path: "contact" }],
+      })
+      .populate({
+        path: "nodes.equipo",
+        populate: [
+          { path: "tipoNombre", select: "tipoNombre" },
+          { path: "irdRef" }, // si quieres limitar campos, agrega .select
+          {
+            path: "satelliteRef",
+            populate: [{ path: "satelliteType", select: "typePolarization" }],
+          },
+        ],
       })
       .populate({
         path: "nodes",
@@ -50,28 +62,43 @@ exports.updateChannel = async (req, res) => {
   }
 };
 
+// controllers/channel.controller.js
 module.exports.getChannelId = async (req, res) => {
   try {
     const channel = await Channel.findById(req.params.id)
+      // Signal + contactos
       .populate({
         path: "signal",
         populate: [{ path: "contact" }],
       })
+      // Equipo dentro de cada nodo + sus refs
+      // Nota: si nodes es un array embebido con campo 'equipo' (ObjectId),
+      // usa el path con punto.
       .populate({
-        path: "nodes",
-        populate: [{ path: "equipo" }],
+        path: "nodes.equipo",
+        populate: [
+          { path: "tipoNombre", select: "tipoNombre" },
+          { path: "irdRef" }, // si quieres limitar campos, agrega .select
+          {
+            path: "satelliteRef",
+            populate: [{ path: "satelliteType", select: "typePolarization" }],
+          },
+        ],
       })
-      .lean();
+      .lean()
+      .exec();
 
     if (!channel) {
-      return res.status(404).json({ error: 'Channel not found' });
+      return res.status(404).json({ error: "Channel not found" });
     }
 
     res.json(channel);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
-}
+};
+
 
 
 
