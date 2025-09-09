@@ -78,63 +78,95 @@ module.exports.createEquipo = async (req, res) => {
 
 module.exports.getEquipo = async (req, res) => {
   try {
-    const equipo = await Equipo.find()
+    const equipos = await Equipo.find()
       .populate("tipoNombre")
-      .sort({ nombre: 1 });
-    res.json(equipo);
+      .populate("irdRef")
+      .lean();
+    res.json(equipos);
   } catch (error) {
-    res.send(404).json({ message: `Error al encontrar equipos` });
+    console.error("getEquipos error:", error);
+    res.status(500).json({ message: "Error al obtener equipos" });
   }
 };
+
 
 
 
 module.exports.getIdEquipo = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "ID de equipo inválido" });
+    const equipo = await Equipo.findById(id)
+      .populate("tipoNombre")
+      .populate("irdRef")
+      .lean();
+    if (!equipo) {
+      return res.status(404).json({ message: "Equipo no encontrado" });
     }
-    const equipo = await Equipo.findById(id).populate("tipoNombre");
-    if (!equipo) return res.status(404).json({ message: "Equipo no encontrado" });
     res.json(equipo);
   } catch (error) {
-    console.error(error);
+    console.error("getIdEquipo error:", error);
     res.status(500).json({ message: "Error al obtener equipo" });
   }
 };
 
 
+
 module.exports.updateEquipo = async (req, res) => {
   try {
-    const id = req.params.id;
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "ID no válido" });
+    const { id } = req.params;
+    const patch = { ...req.body };
+
+    if (patch.tipoNombre) {
+      patch.tipoNombre = await resolveTipoEquipoId(patch.tipoNombre);
+    }
+    if (patch.irdRef !== undefined) {
+      patch.irdRef = await resolveIrdRef(patch.irdRef);
     }
 
-    const equipo = await Equipo.findByIdAndUpdate(id, req.body, {
-      new: true,
-    }).populate("tipoNombre");
+    if (patch.nombre) patch.nombre = String(patch.nombre).trim();
+    if (patch.marca) patch.marca = String(patch.marca).trim();
+    if (patch.modelo) patch.modelo = String(patch.modelo).trim();
+    if (patch.ip_gestion) patch.ip_gestion = String(patch.ip_gestion).trim();
 
-    if (!equipo) {
+    const updated = await Equipo.findByIdAndUpdate(id, patch, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("tipoNombre")
+      .populate("irdRef")
+      .lean();
+
+    if (!updated) {
       return res.status(404).json({ message: "Equipo no encontrado" });
     }
 
-    res.json(equipo);
+    res.json(updated);
   } catch (error) {
-    console.error("Error al actualizar equipo:", error);
+    if (error?.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    if (error?.code === 11000) {
+      const campo = Object.keys(error.keyValue)[0];
+      const valor = error.keyValue[campo];
+      return res
+        .status(409)
+        .json({ message: `Ya existe un equipo con ${campo}: '${valor}'.` });
+    }
+    console.error("updateEquipo error:", error);
     res.status(500).json({ message: "Error al actualizar equipo" });
   }
 };
 
 module.exports.deleteEquipo = async (req, res) => {
   try {
-    const equipo = await Equipo.findByIdAndDelete(req.params.id);
-    if (!equipo)
+    const { id } = req.params;
+    const deleted = await Equipo.findByIdAndDelete(id).lean();
+    if (!deleted) {
       return res.status(404).json({ message: "Equipo no encontrado" });
-    res.json({ message: "equipo eliminado de la base de datos" });
+    }
+    res.json({ ok: true });
   } catch (error) {
-    console.error(error);
+    console.error("deleteEquipo error:", error);
     res.status(500).json({ message: "Error al eliminar equipo" });
   }
 };

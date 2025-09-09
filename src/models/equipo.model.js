@@ -30,6 +30,16 @@ const SchemaEquipos = new mongoose.Schema(
       sparse: true,
       trim: true,
     },
+    satelliteRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Satellite",
+      required: false,
+    },
+    irdRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ird",
+      required: false,
+    },
   },
   { timestamps: true, versionKey: false }
 );
