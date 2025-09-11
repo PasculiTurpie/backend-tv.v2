@@ -1,122 +1,82 @@
-// middlewares/autoAudit.js
-const { audit } = require("../../utils/audit");
+// src/middleware/autoAudit.js
+const AuditLog = require("../models/auditLog.model");
 
-// Mapea métodos HTTP a acciones de auditoría
-const DEFAULT_METHOD_ACTION = {
-  POST: "create",
-  PUT: "update",
-  PATCH: "update",
-  DELETE: "delete",
-  GET: "read",
-};
+function mapAction(req) {
+  const p = `${req.baseUrl}${req.path}`.toLowerCase();
 
-function autoAudit(options = {}) {
-  const {
-    methodAction = DEFAULT_METHOD_ACTION,
-    // resuelve el "resource" desde el req (por ej. primer segmento de /api/equipo/:id => "equipo")
-    getResource = (req) => {
-      const path = req.baseUrl || req.originalUrl || "";
-      // /api/equipo/123 -> ['','api','equipo','123'] => "equipo"
-      const segs = path.split("?")[0].split("/").filter(Boolean);
-      // si usas prefijo /api, saltarlo
-      return segs[1] || segs[0] || "unknown";
-    },
-    includeReads = false, // si quieres loguear GET por defecto
-    sanitize = (obj) => obj, // permite limpiar passwords o payloads sensibles
-  } = options;
+  // Casos explícitos de auth
+  if (p.includes("/auth/login")) return "login";
+  if (p.includes("/auth/logout")) return "logout";
 
-  return function autoAuditMiddleware(req, res, next) {
-    // Guardamos mínima info del request
-    const action = methodAction[req.method] || "read";
-    const resource = getResource(req);
+  switch (req.method) {
+    case "POST":
+      return "create";
+    case "PUT":
+    case "PATCH":
+      return "update";
+    case "DELETE":
+      return "delete";
+    default:
+      return "read";
+  }
+}
 
-    // En res.locals el controlador puede setear:
-    //  - auditResourceId  (string)
-    //  - auditBefore      (obj)
-    //  - auditAfter       (obj)
-    //  - auditMeta        (obj)
-    //  - auditAction      (override)
-    //  - auditResource    (override)
+function inferResource(req) {
+  // /api/v2/equipo/123 → "equipo"
+  const clean = `${req.baseUrl}${req.path}`.replace(/^\/api\/v\d+\//, "");
+  const seg = clean.split("/").filter(Boolean);
+  return seg[0] || ""; // primer segmento como recurso
+}
 
-    // Interceptar el payload de salida (para create/update si no setean auditAfter explícito)
-    let responseBody;
-    const originalJson = res.json.bind(res);
-    const originalSend = res.send.bind(res);
-
-    res.json = function interceptedJson(body) {
-      responseBody = body;
-      return originalJson(body);
-    };
-    res.send = function interceptedSend(body) {
-      // si es JSON string, intenta parsear (best-effort)
-      try {
-        if (typeof body === "string" && body.startsWith("{")) {
-          responseBody = JSON.parse(body);
-        } else {
-          responseBody = body;
-        }
-      } catch (_) {
-        responseBody = body;
-      }
-      return originalSend(body);
-    };
+const autoAudit = () => {
+  return async (req, res, next) => {
+    const startedAt = Date.now();
 
     res.on("finish", async () => {
       try {
-        const finalAction = res.locals.auditAction || action;
-        const finalResource = res.locals.auditResource || resource;
+        const action = mapAction(req);
+        const resource = inferResource(req);
 
-        // Si es GET y no queremos registrar lecturas masivas, salir
-        if (finalAction === "read" && !includeReads) return;
+        // usuario si lo adjuntó attachUserIfPresent o authProfile
+        const userId = req.user?._id || null;
+        const userEmail =
+          req.user?.email ||
+          // fallback: en login, aún no hay req.user; toma email del body si existe
+          (action === "login"
+            ? req.body?.email || req.body?.username || null
+            : null);
 
-        // Construye diff en orden de preferencia: lo que seteó el controlador
-        let diff = undefined;
-        if (res.locals.auditBefore || res.locals.auditAfter) {
-          diff = {
-            ...(res.locals.auditBefore
-              ? { before: sanitize(res.locals.auditBefore) }
-              : {}),
-            ...(res.locals.auditAfter
-              ? { after: sanitize(res.locals.auditAfter) }
-              : {}),
-          };
-        } else if (
-          finalAction === "create" &&
-          responseBody &&
-          typeof responseBody === "object"
-        ) {
-          // Para create, si devolviste el documento recién creado
-          diff = { after: sanitize(responseBody) };
-        } else if (finalAction === "delete" && res.locals.auditBefore) {
-          diff = { before: sanitize(res.locals.auditBefore) };
-        }
+        const entry = {
+          userId,
+          userEmail,
+          role: req.user?.role || null,
 
-        // Id del recurso: prioridad a lo que setee el controlador
-        let resourceId = res.locals.auditResourceId || null;
-        if (!resourceId && responseBody && typeof responseBody === "object") {
-          resourceId = responseBody._id || responseBody.id || null;
-        }
+          action,
+          resource,
+          endpoint: `${req.baseUrl}${req.path}`,
+          method: req.method,
 
-        // Meta adicional
-        const meta = sanitize(res.locals.auditMeta || {});
-
-        await audit({
-          req,
-          action: finalAction,
-          resource: finalResource,
-          resourceId: resourceId ? String(resourceId) : null,
+          ip: req.headers["x-forwarded-for"] || req.ip,
+          userAgent: req.headers["user-agent"] || "",
           statusCode: res.statusCode,
-          diff,
-          meta,
-        });
+
+          meta: {
+            query: req.query,
+            params: req.params,
+            // no guardamos body en GET por higiene
+            body: req.method === "GET" ? undefined : req.body,
+            durationMs: Date.now() - startedAt,
+          },
+        };
+
+        await AuditLog.create(entry);
       } catch (e) {
-        // Nunca romper el flujo por auditoría
-        console.warn("autoAudit error:", e?.message || e);
+        console.error("autoAudit error:", e.message);
       }
     });
 
     next();
   };
-}
+};
 
 module.exports = { autoAudit };

@@ -1,75 +1,68 @@
+// server.js
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+
+require("dotenv").config();
+require("./config/config.mongoose");
+
+const { attachUserIfPresent } = require("./middleware/attachUserIfPresent");
+const { autoAudit } = require("./middleware/autoAudit");
+
+const AuthRoutes = require("./routes/auth.routes");
 const User = require("./routes/user.routes");
 const Ird = require("./routes/ird.routes");
 const Satellite = require("./routes/satellite.routes");
 const Polarization = require("./routes/polarization.routes");
-const Login = require("./routes/login.routes");
-const Logout = require("./routes/logout.routes");
-/* const VerifySession = require("./routes/verifyToken.routes"); */
-const Conmutador = require('./routes/conmutador.routes');
-const Dcm = require('./routes/dcm.routes')
-const Titan = require('./routes/titan.routes')
-const DcmVmx = require('./routes/dcmVmx.routes')
-const RtesVmx = require('./routes/rtesVmx.routes')
-const RouterAsr = require('./routes/routerAsr.routes')
-const Contact = require('./routes/contact.routes')
-const Channel = require('./routes/channel.routes')
-const Signal = require('./routes/signal.routes')
-const Tech = require('./routes/tipoTech.routes')
-const Nodo = require('./routes/node.routes')
-const Equipo = require('./routes/equipo.routes')
-const TipoEquipo = require('./routes/tipoEquipo.routes')
-const Audit = require('./routes/audit.routes')
-const { autoAudit } = require('./middleware/autoAudit')
-/* const errorHandler = require("./middleware/errorHandler"); */
-const morgan = require("morgan");
-require("dotenv").config();
-const cookieParser = require("cookie-parser");
-
-require("./config/config.mongoose");
-// detecta el puerto 3000
-const PORT = process.env.PORT;
+const Conmutador = require("./routes/conmutador.routes");
+const Dcm = require("./routes/dcm.routes");
+const Titan = require("./routes/titan.routes");
+const DcmVmx = require("./routes/dcmVmx.routes");
+const RtesVmx = require("./routes/rtesVmx.routes");
+const RouterAsr = require("./routes/routerAsr.routes");
+const Contact = require("./routes/contact.routes");
+const Channel = require("./routes/channel.routes");
+const Signal = require("./routes/signal.routes");
+const Tech = require("./routes/tipoTech.routes");
+const Nodo = require("./routes/node.routes");
+const Equipo = require("./routes/equipo.routes");
+const TipoEquipo = require("./routes/tipoEquipo.routes");
+const Audit = require("./routes/audit.routes");
 
 const app = express();
-app.use(cookieParser());
 
+app.use(cookieParser());
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-const allowedOrigins = [
-  "http://localhost:5174",
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://localhost:3000",
-  "http://192.168.56.1:5173",
-];
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
+    origin(origin, cb) {
+      const allowed = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "https://localhost:3000",
+        "http://192.168.56.1:5173",
+      ];
+      if (!origin || allowed.includes(origin)) return cb(null, true);
+      return cb(new Error("Not allowed by CORS"));
     },
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // Habilita el envío de cookies si es necesario
+    credentials: true,
   })
 );
 
-// Rutas de autenticación
-app.use("/api/v2/auth", Login); // ej: POST /api/v2/auth/login
-app.use("/api/v2/auth", Logout); // ej: POST /api/v2/auth/logout
+// 1) Adjunta user si hay token (NO obliga auth)
+app.use(attachUserIfPresent);
 
+// 2) Auto-audit global (registrará todo lo que pase después)
+app.use(autoAudit());
 
+// 3) Rutas
+app.use("/api/v2/auth", AuthRoutes);
 app.use(
   "/api/v2",
-  Login,
-  Logout,
   User,
   Ird,
   Satellite,
@@ -88,10 +81,7 @@ app.use(
   Equipo,
   TipoEquipo,
   Audit
-  /*   errorHandler */
 );
 
-app.listen(PORT, () => {
-  // si todo funciona bien, la consola mostrará qué puerto está detectando la aplicación
-  console.log(`Escuchando el puerto ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Escuchando el puerto ${PORT}`));

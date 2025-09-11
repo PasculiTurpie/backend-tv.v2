@@ -6,7 +6,7 @@ const { authProfile } = require('../middleware/validateToken');
 // Si tienes un middleware de auth/roles, úsalo aquí (p.ej. solo admin):
 // router.use(require("../middlewares/requireAdmin"));
 
-router.get("/audit", getAuditLogs);
+router.get("/audit", authProfile, getAuditLogs);
 
 // Export CSV con los mismos filtros
 router.get("/audit/export", authProfile, exportAuditCSV);
