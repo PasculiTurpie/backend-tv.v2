@@ -20,7 +20,9 @@ const Signal = require('./routes/signal.routes')
 const Tech = require('./routes/tipoTech.routes')
 const Nodo = require('./routes/node.routes')
 const Equipo = require('./routes/equipo.routes')
-const TipoEquipo  = require('./routes/tipoEquipo.routes')
+const TipoEquipo = require('./routes/tipoEquipo.routes')
+const Audit = require('./routes/audit.routes')
+const { autoAudit } = require('./middleware/autoAudit')
 /* const errorHandler = require("./middleware/errorHandler"); */
 const morgan = require("morgan");
 require("dotenv").config();
@@ -64,25 +66,6 @@ app.use("/api/v2/auth", Login); // ej: POST /api/v2/auth/login
 app.use("/api/v2/auth", Logout); // ej: POST /api/v2/auth/logout
 
 
-// Rutas de recursos
-/* app.use("/api/v2/users", User);
-app.use("/api/v2/irds", Ird);
-app.use("/api/v2/satellites", Satellite);
-app.use("/api/v2/polarizations", Polarization);
-app.use("/api/v2/conmutadores", Conmutador);
-app.use("/api/v2/dcms", Dcm);
-app.use("/api/v2/titans", Titan);
-app.use("/api/v2/dcm-vmx", DcmVmx);
-app.use("/api/v2/rtes-vmx", RtesVmx);
-app.use("/api/v2/routers-asr", RouterAsr);
-app.use("/api/v2/contacts", Contact);
-app.use("/api/v2/channels", Channel);
-app.use("/api/v2/techs", Tech);
-app.use("/api/v2/nodes", Nodo);
-app.use("/api/v2/equipos", Equipo);
-app.use("/api/v2/tipos-equipo", TipoEquipo);
-app.use("/api/v2/signals", Signal); */
-
 app.use(
   "/api/v2",
   Login,
@@ -104,7 +87,8 @@ app.use(
   Nodo,
   Equipo,
   TipoEquipo,
-/*   errorHandler */
+  Audit
+  /*   errorHandler */
 );
 
 app.listen(PORT, () => {

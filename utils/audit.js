@@ -1,4 +1,4 @@
-const AuditLog = require("../models/auditLog.model");
+const AuditLog = require("../src/models/auditLog.model");
 
 module.exports.getAuditLogs = async (req, res) => {
   try {
