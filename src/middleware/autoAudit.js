@@ -35,6 +35,7 @@ function pickUserFromReq(req) {
       };
     } catch {}
   }
+  // login fallback
   const isLogin = /\/auth\/login(?:\?|$|\/)/.test(req.originalUrl || "");
   if (isLogin && req.method === "POST" && req.body?.email) {
     return { userId: null, userEmail: req.body.email, role: null };
@@ -67,6 +68,33 @@ function safeBody(body) {
   return clone;
 }
 
+// 👉 NUEVO: derivar recurso e id desde originalUrl/params
+function deriveResourceAndId(req) {
+  // quita querystring
+  const full = (req.originalUrl || "").split("?")[0];
+
+  // quita prefijo /api/v2 o /api
+  const cleaned = full.replace(/^\/api\/v2\/?/, "/").replace(/^\/api\/?/, "/");
+
+  // split por /
+  const parts = cleaned.split("/").filter(Boolean); // e.g. ["equipo","68af..."]
+
+  const resource = parts[0] || null;
+
+  // preferir req.params.id si existe (ya parseado por el router)
+  let resourceId = req.params?.id || null;
+
+  // si no hay params.id, intenta detectar un ObjectId en la URL
+  if (!resourceId && parts.length > 1) {
+    const maybeId = parts[1];
+    if (/^[0-9a-fA-F]{24}$/.test(maybeId)) {
+      resourceId = maybeId;
+    }
+  }
+
+  return { resource, resourceId };
+}
+
 const autoAudit = (fixedAction) => {
   return async (req, res, next) => {
     const started = Date.now();
@@ -74,8 +102,9 @@ const autoAudit = (fixedAction) => {
     res.on("finish", async () => {
       try {
         const { userId, userEmail, role } = pickUserFromReq(req);
-        const base = (req.baseUrl || "").replace(/^\/api\/v2\/?/, "");
-        const resource = base.split("/").filter(Boolean)[0] || null;
+
+        // ✅ Recurso e id correctos
+        const { resource, resourceId } = deriveResourceAndId(req);
 
         const entry = {
           userId,
@@ -83,7 +112,7 @@ const autoAudit = (fixedAction) => {
           role,
           action: fixedAction || inferAction(req.method, req.originalUrl || ""),
           resource,
-          resourceId: req.params?.id || null,
+          resourceId,
           endpoint: req.originalUrl,
           method: req.method,
           ip: req.headers["x-forwarded-for"] || req.ip,
