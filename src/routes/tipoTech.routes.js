@@ -5,6 +5,6 @@ const { authProfile } = require('../middleware/validateToken');
 
 
 router.post("/tecnologia", authProfile, TipoTech.createTech);
-router.get('/tecnologia',authProfile, TipoTech.getTech)
+router.get('/tecnologia', TipoTech.getTech)
 
 module.exports = router

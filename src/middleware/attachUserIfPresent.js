@@ -1,36 +1,34 @@
 // src/middleware/attachUserIfPresent.js
 const jwt = require("jsonwebtoken");
 
-function getToken(req) {
-  // 1) Cookie
+function extractToken(req) {
+  // 1) cookie
   if (req.cookies?.token) return req.cookies.token;
-  // 2) Authorization: Bearer xxx
+
+  // 2) Authorization: Bearer <token>
   const auth = req.headers?.authorization || "";
   const m = auth.match(/^Bearer\s+(.+)$/i);
-  if (m) return m[1];
-  return null;
+  return m ? m[1] : null;
 }
 
-/**
- * Adjunta req.user si hay token válido, pero NO corta la request (no 401).
- * Útil para auditoría en rutas públicas o GETs.
- */
-const attachUserIfPresent = (req, _res, next) => {
+function attachUserIfPresent(req, _res, next) {
   try {
-    const token = getToken(req);
+    const token = extractToken(req);
     if (!token) return next();
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // Estructura mínima esperada en tus controladores
+    const dec = jwt.verify(token, process.env.JWT_SECRET);
+
     req.user = {
-      _id: decoded.id || decoded._id || decoded.userId || null,
-      email: decoded.email || decoded.userEmail || decoded.username || null,
-      role: decoded.role || null,
+      _id: dec.id || dec._id || dec.userId || null,
+      email: dec.email || dec.userEmail || dec.username || null,
+      role: dec.role || null,
     };
+
+    return next();
   } catch (_e) {
-    // token inválido/expirado → seguimos sin usuario
+    // Si falla el token, seguimos sin usuario (NO devolvemos 401 aquí)
+    return next();
   }
-  return next();
-};
+}
 
 module.exports = { attachUserIfPresent };

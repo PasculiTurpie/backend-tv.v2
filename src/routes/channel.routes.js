@@ -4,7 +4,7 @@ const Channel = require('../controllers/channel.controller')
 const { authProfile } = require('../middleware/validateToken')
 
 // Crear
-router.post("/channels", Channel.createChannel);
+router.post("/channels", authProfile, Channel.createChannel);
 
 // Listar todos
 router.get("/channels", Channel.getChannel);
@@ -13,13 +13,13 @@ router.get("/channels", Channel.getChannel);
 router.get("/channels/:id", Channel.getChannelId);
 
 // Actualizar canal completo
-router.put("/channels/:id", Channel.updateChannel);
+router.put("/channels/:id", authProfile, Channel.updateChannel);
 
 // Actualizar solo flujo (nodos/edges)
-router.put("/channels/:id/flow", Channel.updateChannelFlow);
+router.put("/channels/:id/flow", authProfile, Channel.updateChannelFlow);
 
 // Eliminar
-router.delete("/channels/:id", Channel.deleteChannel);
+router.delete("/channels/:id", authProfile, Channel.deleteChannel);
 
 
 module.exports = router;
