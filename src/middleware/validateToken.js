@@ -1,15 +1,11 @@
-// middleware/validateToken.js
 const jwt = require("jsonwebtoken");
 const User = require("../models/users.model");
-
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SECRET_KEY; // 👈
 
 function getTokenFromReq(req) {
   const h = req.headers?.authorization || req.headers?.Authorization;
-  if (typeof h === "string" && h.startsWith("Bearer ")) {
-    const tok = h.slice(7).trim();
-    if (tok) return tok;
-  }
+  if (typeof h === "string" && h.startsWith("Bearer "))
+    return h.slice(7).trim();
   if (req.cookies?.token) return req.cookies.token;
   if (req.headers?.["x-access-token"]) return req.headers["x-access-token"];
   return null;
@@ -31,8 +27,9 @@ async function authProfile(req, res, next) {
       _id: user._id,
       email: user.email || payload.email || null,
       role: user.role || payload.role || null,
+      username: user.username || payload.username || null,
+      profilePicture: user.profilePicture || null,
     };
-    req.userId = user._id; // compat
 
     next();
   } catch {

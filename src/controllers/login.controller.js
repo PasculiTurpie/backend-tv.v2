@@ -4,9 +4,10 @@ const User = require("../models/users.model");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SECRET_KEY; // 👈 unificar
+
 module.exports.login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
     if (!user)
@@ -18,10 +19,10 @@ module.exports.login = async (req, res) => {
 
     const { _id, username, role } = user;
 
+    // Firma SIEMPRE con el mismo secreto que validas
     const token = jwt.sign(
-      // 👇 incluye email en el payload para que autoAudit pueda leerlo del token si hace falta
-      { id: _id, username, role, email: user.email },
-      process.env.JWT_SECRET,
+      { id: _id, email: user.email, username, role }, // incluye email por conveniencia
+      JWT_SECRET,
       { expiresIn: "1d" }
     );
 
@@ -29,19 +30,25 @@ module.exports.login = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: isProd ? "none" : "lax", // en local usa 'lax' (None requiere Secure)
-      secure: isProd, // true solo en https (prod)
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // útil para autoAudit del login
+    // Para autoAudit de esta request
     req.user = { _id: user._id, email: user.email, role: user.role };
 
     return res.json({
       ok: true,
       token,
-      user: { id: user._id, email: user.email, role: user.role },
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        profilePicture: user.profilePicture,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -67,15 +74,20 @@ module.exports.logout = (req, res) => {
 
 module.exports.profile = async (req, res) => {
   try {
-    // 👇 tu middleware setea req.user, no req.userId
-    const id = req.user?._id || req.user?.id;
-    if (!id) return res.status(401).json({ message: "Unauthorized" });
-
-    const user = await User.findById(id).select("-password");
+    // authProfile ya pone req.user._id
+    const user = await User.findById(req.user._id).select("-password").lean();
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
 
-    return res.json(user);
+    // Devuelve exactamente lo que el frontend espera
+    return res.json({
+      id: user._id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      profilePicture: user.profilePicture,
+      createdAt: user.createdAt,
+    });
   } catch (error) {
     return res.status(500).json({ message: "Error al obtener el perfil" });
   }
