@@ -93,6 +93,14 @@ const IrdSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    swAdmin: {
+      type: String,
+      trim: true,
+    },
+    portSw: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );
