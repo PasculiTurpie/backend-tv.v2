@@ -2,7 +2,7 @@
 const jwt = require("jsonwebtoken");
 const AuditLog = require("../models/auditLog.model");
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_ACCESS_SECRET;
 
 function getTokenFromReq(req) {
   const h = req.headers?.authorization || req.headers?.Authorization;

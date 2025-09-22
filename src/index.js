@@ -3,13 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-
 require("dotenv").config();
 require("./config/config.mongoose");
 
 const { attachUserIfPresent } = require("./middleware/attachUserIfPresent");
-const { authProfile } = require("./middleware/validateToken");
 const { autoAudit } = require("./middleware/autoAudit");
+const { protectMutating } = require("./middleware/protectMutating"); // 👈 NUEVO
 
 const AuthRoutes = require("./routes/auth.routes");
 const User = require("./routes/user.routes");
@@ -45,16 +44,17 @@ app.use(
       return cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization"], // puedes quitar Authorization si ya no usas ese header
   })
 );
 
-
+// Intenta identificar usuario si trae access_token válido (no obligatorio)
 app.use(attachUserIfPresent);
 
-app.use("/api/v2/auth", AuthRoutes);
+// 👇 Aplica auditoría y protección SOLO a métodos mutantes
 app.use(
   "/api/v2",
+  protectMutating, // ⬅️ aquí protegemos POST/PUT/PATCH/DELETE, con allowlist para auth/login y auth/refresh
   autoAudit(),
   User,
   Ird,
@@ -67,7 +67,8 @@ app.use(
   Nodo,
   Equipo,
   TipoEquipo,
-  Audit
+  Audit,
+  AuthRoutes
 );
 
 const PORT = process.env.PORT || 3000;
