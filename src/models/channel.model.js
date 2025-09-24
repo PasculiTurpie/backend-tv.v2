@@ -35,33 +35,21 @@ const NodeSchema = new mongoose.Schema({
 });
 
 const EdgeSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-  },
-  source: {
-    type: String,
-    required: true,
-  },
-  target: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    default: "smoothstep",
-  },
-  animated: {
-    type: Boolean,
-    default: true,
-  },
+  id: { type: String, required: true },
+  source: { type: String, required: true },
+  target: { type: String, required: true },
+  type: { type: String, default: "smoothstep" },
+  animated: { type: Boolean, default: true },
   style: {
     stroke: { type: String, default: "red" },
+    // puedes agregar strokeWidth si lo usas
   },
   sourceHandle: String,
   targetHandle: String,
   label: String,
-});
+  // ⬇️⬇️ IMPORTANTE para labelPos, label (en data), waypoints, flags, etc.
+  data: { type: mongoose.Schema.Types.Mixed, default: {} },
+})
 
 const ChannelSchema = new mongoose.Schema(
   {
