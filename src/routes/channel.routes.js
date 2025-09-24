@@ -13,13 +13,13 @@ router.get("/channels", Channel.getChannel);
 router.get("/channels/:id", Channel.getChannelId);
 
 // Actualizar canal completo
-router.put("/channels/:id", Channel.updateChannel);
+router.put("/channels/:id",authRequired, Channel.updateChannel);
 
 // Actualizar solo flujo (nodos/edges)
-router.put("/channels/:id/flow", Channel.updateChannelFlow);
+router.put("/channels/:id/flow",authRequired, Channel.updateChannelFlow);
 
 // Eliminar
-router.delete("/channels/:id", Channel.deleteChannel);
+router.delete("/channels/:id",authRequired, Channel.deleteChannel);
 
 
 module.exports = router;
