@@ -8,7 +8,7 @@ require("./config/config.mongoose");
 
 const { attachUserIfPresent } = require("./middleware/attachUserIfPresent");
 const { autoAudit } = require("./middleware/autoAudit");
-const { protectMutating } = require("./middleware/protectMutating"); // 👈 NUEVO
+const { protectMutating } = require("./middleware/protectMutating");
 
 const AuthRoutes = require("./routes/auth.routes");
 const User = require("./routes/user.routes");
@@ -23,6 +23,7 @@ const Nodo = require("./routes/node.routes");
 const Equipo = require("./routes/equipo.routes");
 const TipoEquipo = require("./routes/tipoEquipo.routes");
 const Audit = require("./routes/audit.routes");
+const bulkIrdRoutes = require("./routes/bulkIrd.routes");
 
 const app = express();
 
@@ -30,31 +31,49 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
 
+// Si alguna vez sirves detrás de proxy/HTTPS:
+app.set("trust proxy", 1);
+
+// --- CORS con credenciales + manejo de OPTIONS ---
+const allowed = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "https://localhost:3000",
+  "http://192.168.56.1:5173",
+];
 app.use(
   cors({
     origin(origin, cb) {
-      const allowed = [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:3000",
-        "https://localhost:3000",
-        "http://192.168.56.1:5173",
-      ];
-      if (!origin || allowed.includes(origin)) return cb(null, true);
+      if (!origin) return cb(null, true); // Postman/cURL
+      if (allowed.includes(origin)) return cb(null, true);
       return cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"], // puedes quitar Authorization si ya no usas ese header
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
 );
 
-// Intenta identificar usuario si trae access_token válido (no obligatorio)
-app.use(attachUserIfPresent);
+// Responder siempre OPTIONS (preflight)
+app.options(
+  "*",
+  cors({
+    origin: allowed,
+    credentials: true,
+  })
+);
 
-// 👇 Aplica auditoría y protección SOLO a métodos mutantes
+// server.js (fragmento)
+app.use(attachUserIfPresent); // opcional, no estorba
+
+// 👇 /auth SIN protectMutating
+app.use('/api/v2/auth', AuthRoutes);
+
+// 👇 resto de rutas con protección SOLO a métodos mutantes
 app.use(
-  "/api/v2",
-  protectMutating, // ⬅️ aquí protegemos POST/PUT/PATCH/DELETE, con allowlist para auth/login y auth/refresh
+  '/api/v2',
+  protectMutating,    // debe dejar pasar GET/HEAD/OPTIONS
   autoAudit(),
   User,
   Ird,
@@ -68,7 +87,7 @@ app.use(
   Equipo,
   TipoEquipo,
   Audit,
-  AuthRoutes
+  bulkIrdRoutes
 );
 
 const PORT = process.env.PORT || 3000;
