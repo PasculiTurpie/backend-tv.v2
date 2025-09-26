@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const TipoEquipo = require('../controllers/tipoEquipo.controller');
-const { authProfile } = require('../middleware/validateToken');
+
 
 router.get("/tipo-equipo",TipoEquipo.getTipoEquipo);
-router.post("/tipo-equipo",authProfile,TipoEquipo.createTipoEquipo);
+router.post("/tipo-equipo",TipoEquipo.createTipoEquipo);
 
 module.exports = router;

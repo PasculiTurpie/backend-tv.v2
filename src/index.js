@@ -7,6 +7,7 @@ require("dotenv").config();
 require("./config/config.mongoose");
 
 const { attachUserIfPresent } = require("./middleware/attachUserIfPresent");
+const validateTokenMaybe = require("./middleware/validateTokenMaybe");
 const { autoAudit } = require("./middleware/autoAudit");
 const { protectMutating } = require("./middleware/protectMutating");
 
@@ -19,7 +20,6 @@ const Contact = require("./routes/contact.routes");
 const Channel = require("./routes/channel.routes");
 const Signal = require("./routes/signal.routes");
 const Tech = require("./routes/tipoTech.routes");
-const Nodo = require("./routes/node.routes");
 const Equipo = require("./routes/equipo.routes");
 const TipoEquipo = require("./routes/tipoEquipo.routes");
 const Audit = require("./routes/audit.routes");
@@ -27,14 +27,14 @@ const bulkIrdRoutes = require("./routes/bulkIrd.routes");
 
 const app = express();
 
+/** Confía en el proxy para obtener la IP real mediante X-Forwarded-* */
+app.set("trust proxy", true);
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// Si alguna vez sirves detrás de proxy/HTTPS:
-app.set("trust proxy", 1);
-
-// --- CORS con credenciales + manejo de OPTIONS ---
+/** CORS con credenciales + preflight */
 const allowed = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -55,7 +55,7 @@ app.use(
   })
 );
 
-// Responder siempre OPTIONS (preflight)
+/** Responder siempre OPTIONS (preflight) */
 app.options(
   "*",
   cors({
@@ -64,17 +64,22 @@ app.options(
   })
 );
 
-// server.js (fragmento)
-app.use(attachUserIfPresent); // opcional, no estorba
+/** Popular req.user si hay token (suave, no bloquea).
+ *  attachUserIfPresent no estorba; lo mantenemos por compat y lo complementamos con validateTokenMaybe.
+ */
+app.use(attachUserIfPresent);
+app.use(validateTokenMaybe);
 
-// 👇 /auth SIN protectMutating
-app.use('/api/v2/auth', AuthRoutes);
+/** Auditar TODAS las requests (incluye /auth y anónimos) */
+app.use(autoAudit());
 
-// 👇 resto de rutas con protección SOLO a métodos mutantes
+/** Rutas de Auth SIN protectMutating (deben poder loguear/refresh/logout) */
+app.use("/api/v2/auth", AuthRoutes);
+
+/** Resto de rutas bajo /api/v2 con protección SOLO para métodos mutantes */
 app.use(
-  '/api/v2',
-  protectMutating,    // debe dejar pasar GET/HEAD/OPTIONS
-  autoAudit(),
+  "/api/v2",
+  protectMutating, // debe dejar pasar GET/HEAD/OPTIONS; bloquear mutantes si no hay permisos
   User,
   Ird,
   Satellite,
@@ -83,7 +88,6 @@ app.use(
   Contact,
   Channel,
   Tech,
-  Nodo,
   Equipo,
   TipoEquipo,
   Audit,

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Polarization = require('../controllers/polarization.controller');
-const { authProfile } = require('../middleware/validateToken');
 
 
-router.get("/polarization", authProfile, Polarization.getPolarization);
-router.post('/polarization',authProfile,  Polarization.createPolarization);
+
+router.get("/polarization",  Polarization.getPolarization);
+router.post('/polarization',  Polarization.createPolarization);
 
 
 module.exports = router;

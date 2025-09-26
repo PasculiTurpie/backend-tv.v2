@@ -1,4 +1,3 @@
-// src/controllers/audit.controller.js
 const AuditLog = require("../models/auditLog.model");
 
 function toRegex(val) {
@@ -28,7 +27,7 @@ exports.getAuditLogs = async (req, res) => {
     const query = {};
 
     if (q) {
-      // búsqueda libre en algunos campos
+      // búsqueda libre
       query.$or = [
         { userEmail: toRegex(q) },
         { resource: toRegex(q) },
@@ -81,9 +80,8 @@ exports.getAuditLogs = async (req, res) => {
   }
 };
 
-exports.exportAuditCSV = async (req, res) => {
+exports.exportAuditCSV = async (_req, res) => {
   try {
-    // Reutiliza la lógica del filtro si quieres (o simplifica)
     const logs = await AuditLog.find({}).sort("-createdAt").limit(5000);
 
     let csv =
