@@ -4,10 +4,10 @@ const Contact = require('../controllers/contact.controller')
 const { authProfile } = require('../middleware/validateToken')
 
 router.get('/contact',Contact.getContact)
-router.post('/contact',authProfile, Contact.createContact)
+router.post('/contact', Contact.createContact)
 router.get("/contact/:id", Contact.getIdContact);
-router.put("/contact/:id",authProfile, Contact.updateContact);
-router.delete("/contact/:id", authProfile, Contact.deleteContact);
+router.put("/contact/:id", Contact.updateContact);
+router.delete("/contact/:id",  Contact.deleteContact);
 
 
 module.exports = router
