@@ -1,36 +1,21 @@
+// server/models/channel.model.js
 const mongoose = require("mongoose");
 
 const NodeSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    default: "image",
-  },
+  id: { type: String, required: true },
+  type: { type: String, default: "image" },
   equipo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Equipo",
-    required:true,
+    required: true,
   },
   position: {
-    x: {
-      type: Number,
-      required: true,
-    },
-    y: { 
-      type: Number,
-      required: true,
-    },
+    x: { type: Number, required: true },
+    y: { type: Number, required: true },
   },
   data: {
-    label: {
-      type: String,
-      required: true,
-    },
+    label: { type: String, required: true },
     image: String,
-    // Puedes añadir más campos aquí para info extra
   },
 });
 
@@ -42,14 +27,14 @@ const EdgeSchema = new mongoose.Schema({
   animated: { type: Boolean, default: true },
   style: {
     stroke: { type: String, default: "red" },
-    // puedes agregar strokeWidth si lo usas
   },
   sourceHandle: String,
   targetHandle: String,
   label: String,
-  // ⬇️⬇️ IMPORTANTE para labelPos, label (en data), waypoints, flags, etc.
+
+  // 👇 necesario para guardar multicast y otros campos del front
   data: { type: mongoose.Schema.Types.Mixed, default: {} },
-})
+});
 
 const ChannelSchema = new mongoose.Schema(
   {
@@ -64,21 +49,23 @@ const ChannelSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-ChannelSchema.pre("validate", function(next) {
+// Validación: edges deben referenciar nodes existentes
+ChannelSchema.pre("validate", function (next) {
   const nodeIds = this.nodes.map((node) => node.id);
-  
   for (const edge of this.edges) {
     if (!nodeIds.includes(edge.source)) {
-      return next(new Error(`Edge source "${edge.source}" does not exist in nodes`));
+      return next(
+        new Error(`Edge source "${edge.source}" does not exist in nodes`)
+      );
     }
     if (!nodeIds.includes(edge.target)) {
-      return next(new Error(`Edge target "${edge.target}" does not exist in nodes`));
+      return next(
+        new Error(`Edge target "${edge.target}" does not exist in nodes`)
+      );
     }
   }
-  
   next();
 });
-
 
 const Channel = mongoose.model("Channel", ChannelSchema);
 module.exports = Channel;
