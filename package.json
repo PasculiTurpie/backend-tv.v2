@@ -18,6 +18,7 @@
   "name": "backend-tv.v2",
   "version": "1.0.0",
   "description": "Se creara la conexion a BD mongodb\r git",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -24,8 +24,11 @@ const Equipo = require("./routes/equipo.routes");
 const TipoEquipo = require("./routes/tipoEquipo.routes");
 const Audit = require("./routes/audit.routes");
 const bulkIrdRoutes = require("./routes/bulkIrd.routes");
+const servicesProxy = require("../utils/servicesProxy");
+
 
 const app = express();
+
 
 /** Confía en el proxy para obtener la IP real mediante X-Forwarded-* */
 app.set("trust proxy", true);
@@ -76,6 +79,7 @@ app.use(autoAudit());
 /** Rutas de Auth SIN protectMutating (deben poder loguear/refresh/logout) */
 app.use("/api/v2/auth", AuthRoutes);
 
+app.use("/api/v2/proxy", servicesProxy);
 /** Resto de rutas bajo /api/v2 con protección SOLO para métodos mutantes */
 app.use(
   "/api/v2",
@@ -95,4 +99,9 @@ app.use(
 );
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Escuchando el puerto ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Proxy backend escuchando en http://localhost:${PORT}`);
+  console.log(
+    `Ruta proxy: http://localhost:${PORT}/proxy/services?host=172.19.14.118`
+  );
+});
