@@ -13,7 +13,16 @@ Crea un archivo `.env` en la raíz del backend (ya existe un ejemplo con valores
 
 ```bash
 PORT=3000
+# Puedes entregar una URI lista...
 MONGODB_URI=mongodb://localhost:27017/signalTV
+# ...o bien definir los fragmentos para construirla automáticamente
+# MONGODB_HOST=localhost
+# MONGODB_PORT=27017
+# MONGODB_DATABASE=signalTV
+# MONGODB_USERNAME=
+# MONGODB_PASSWORD=
+# MONGODB_AUTH_SOURCE=admin
+# MONGODB_OPTIONS=retryWrites=true&w=majority
 TITAN_USERNAME=Operator
 TITAN_PASSWORD=titan
 TITAN_DEFAULT_PROTOCOL=http
@@ -31,6 +40,10 @@ npm run dev # nodemon
 # o
 npm start
 ```
+
+El backend intentará construir la cadena de conexión usando `MONGODB_URI` o, si no está disponible,
+los fragmentos `MONGODB_HOST`, `MONGODB_DATABASE`, etc. La cadena que se usa se muestra (sin credenciales)
+en la consola para facilitar la depuración.
 
 El servidor sólo comienza a escuchar una vez que la conexión a MongoDB se establece correctamente.
 
@@ -59,6 +72,12 @@ Los endpoints Titans realizan las peticiones a los equipos Titans desde el backe
 
 ```bash
 curl "http://localhost:3000/api/v2/titans/services?host=172.19.14.118&path=/api/v1/servicesmngt/services"
+```
+
+También puedes proporcionar la URL completa del Titan (incluyendo protocolo) mediante el parámetro `url`:
+
+```bash
+curl "http://localhost:3000/api/v2/titans/services?url=http://172.19.14.118/api/v1/servicesmngt/services"
 ```
 
 ### Obtener servicios de múltiples hosts
