@@ -10,6 +10,10 @@ const NodeSchema = new mongoose.Schema(
     },
     data: {
       label: { type: String, required: true },
+      labelPosition: {
+        x: { type: Number },
+        y: { type: Number },
+      },
       otherData: { type: mongoose.Schema.Types.Mixed }, // otros datos opcionales
     },
   },
