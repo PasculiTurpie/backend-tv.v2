@@ -23,9 +23,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "start:proxy": "node src/proxyServer.js", 
-    "dev:proxy": "nodemon src/proxyServer.js"
+    "dev": "nodemon src/index.js"
   },
   "author": "Jorge R. Sepúlveda Turpie",
   "license": "MIT",
