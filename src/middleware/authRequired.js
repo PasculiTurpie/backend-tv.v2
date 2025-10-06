@@ -10,7 +10,11 @@ function authRequired(req, res, next) {
 
     if (!token) {
       // No hay cookie -> no hay sesión
-      return res.status(401).json({ error: "no_token" });
+      return res.status(401).json({
+        error: "no_token",
+        message:
+          "Modo de solo lectura: inicia sesión para editar diagramas o etiquetas.",
+      });
     }
 
     // 2) Verificar firma y expiración
@@ -30,9 +34,17 @@ function authRequired(req, res, next) {
   } catch (err) {
     // Firmas/expiración
     if (err?.name === "TokenExpiredError") {
-      return res.status(401).json({ error: "token_expired" });
+      return res.status(401).json({
+        error: "token_expired",
+        message:
+          "La sesión expiró. Inicia sesión nuevamente para editar diagramas o etiquetas.",
+      });
     }
-    return res.status(401).json({ error: "invalid_token" });
+    return res.status(401).json({
+      error: "invalid_token",
+      message:
+        "No pudimos validar tu sesión. Inicia sesión para salir del modo de solo lectura.",
+    });
   }
 }
 
