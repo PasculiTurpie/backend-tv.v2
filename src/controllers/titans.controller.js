@@ -86,11 +86,44 @@ function normalizePath(rawPath) {
   }
 }
 
+function normalizeUrl(rawUrl) {
+  if (!rawUrl) return null;
+
+  const value = String(rawUrl).trim();
+
+  if (!value) {
+    throw httpError(400, "Invalid 'url'. Unable to parse value");
+  }
+
+  let parsed;
+
+  try {
+    parsed = new URL(value);
+  } catch (_error) {
+    throw httpError(400, "Invalid 'url'. Unable to parse value");
+  }
+
+  const protocol = parsed.protocol.replace(/:$/, "").toLowerCase();
+
+  if (protocol !== "http" && protocol !== "https") {
+    throw httpError(400, "Invalid 'url'. Only http or https are allowed");
+  }
+
+  const host = normalizeHost(parsed.host);
+  const path = normalizePath(parsed.pathname + parsed.search);
+
+  return { protocol, host, path };
+}
+
 async function getServicesForHost(req, res) {
   try {
-    const host = normalizeHost(req.query.host);
-    const path = normalizePath(req.query.path);
-    const protocol = normalizeProtocol(req.query.protocol);
+    const parsedUrl = normalizeUrl(req.query.url);
+
+    const host = parsedUrl ? parsedUrl.host : normalizeHost(req.query.host);
+    const path = parsedUrl ? parsedUrl.path : normalizePath(req.query.path);
+    const protocol = parsedUrl
+      ? parsedUrl.protocol
+      : normalizeProtocol(req.query.protocol);
 
     const result = await requestTitan({ host, path, protocol });
 
