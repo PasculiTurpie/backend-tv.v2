@@ -1,10 +1,13 @@
-const express = require('express');
+const express = require("express");
+const TipoTechController = require("../controllers/tipoTech.controller");
+
 const router = express.Router();
-const TipoTech = require('../controllers/tipoTech.controller');
 
+const TECH_COLLECTION_ROUTES = ["/tecnologias", "/tecnologia"];
 
+TECH_COLLECTION_ROUTES.forEach((path) => {
+  router.get(path, TipoTechController.getTech);
+  router.post(path, TipoTechController.createTech);
+});
 
-router.post("/tecnologia", TipoTech.createTech);
-router.get('/tecnologia', TipoTech.getTech)
-
-module.exports = router
+module.exports = router;

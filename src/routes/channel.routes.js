@@ -1,25 +1,19 @@
-const express = require('express')
-const router = express.Router()
-const Channel = require('../controllers/channel.controller')
-const { authRequired } = require("../middleware/authRequired.js");
+const express = require("express");
+const ChannelController = require("../controllers/channel.controller");
 
-// Crear
-router.post("/channels", Channel.createChannel);
+const router = express.Router();
 
-// Listar todos
-router.get("/channels", Channel.getChannel);
+router
+  .route("/channels")
+  .post(ChannelController.createChannel)
+  .get(ChannelController.getChannel);
 
-// Obtener uno por ID
-router.get("/channels/:id", Channel.getChannelId);
+router
+  .route("/channels/:id")
+  .get(ChannelController.getChannelId)
+  .put(ChannelController.updateChannel)
+  .delete(ChannelController.deleteChannel);
 
-// Actualizar canal completo
-router.put("/channels/:id",authRequired, Channel.updateChannel);
-
-// Actualizar solo flujo (nodos/edges)
-router.put("/channels/:id/flow",authRequired, Channel.updateChannelFlow);
-
-// Eliminar
-router.delete("/channels/:id",authRequired, Channel.deleteChannel);
-
+router.put("/channels/:id/flow", ChannelController.updateChannelFlow);
 
 module.exports = router;
