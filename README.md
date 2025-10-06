@@ -61,6 +61,12 @@ Los endpoints Titans realizan las peticiones a los equipos Titans desde el backe
 curl "http://localhost:3000/api/v2/titans/services?host=172.19.14.118&path=/api/v1/servicesmngt/services"
 ```
 
+También puedes proporcionar la URL completa del Titan (incluyendo protocolo) mediante el parámetro `url`:
+
+```bash
+curl "http://localhost:3000/api/v2/titans/services?url=http://172.19.14.118/api/v1/servicesmngt/services"
+```
+
 ### Obtener servicios de múltiples hosts
 
 ```bash
