@@ -1,11 +1,35 @@
 const User = require("../models/users.model");
 
-module.exports.getAllUser = async (req, res) => {
+const sanitizeUser = (userDoc) => {
+  if (!userDoc) return null;
+  const plain = userDoc.toObject ? userDoc.toObject() : userDoc;
+  const rawId = plain._id;
+  const id =
+    typeof rawId === "string"
+      ? rawId
+      : rawId && typeof rawId.toString === "function"
+      ? rawId.toString()
+      : rawId || null;
+
+  return {
+    id,
+    username: plain.username,
+    email: plain.email,
+    role: plain.role,
+    profilePicture: plain.profilePicture,
+    createdAt: plain.createdAt,
+    updatedAt: plain.updatedAt,
+  };
+};
+
+module.exports.getAllUser = async (_req, res) => {
   try {
-    
-    const users = await User.find().sort({ name: 1 });
-    
-    return res.json(users);
+    const users = await User.find()
+      .select("-password")
+      .sort({ username: 1 })
+      .lean();
+
+    return res.json(users.map(sanitizeUser));
   } catch (error) {
     console.error("Error capturado en catch:", error.message);
     return res.status(500).json({ message: "Error al obtener usuarios" });
@@ -14,10 +38,10 @@ module.exports.getAllUser = async (req, res) => {
 
 module.exports.getUserId = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select("-password").lean();
     if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
-    res.json(user);
+    res.json(sanitizeUser(user));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener usuario" });
@@ -26,7 +50,7 @@ module.exports.getUserId = async (req, res) => {
 
 module.exports.createUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password } = req.body || {};
 
     if (!username || !email || !password) {
       return res
@@ -51,11 +75,7 @@ module.exports.createUser = async (req, res) => {
 
     res.status(201).json({
       message: "Usuario creado con éxito!",
-      user: {
-        id: savedUser._id,
-        username: savedUser.username,
-        email: savedUser.email,
-      },
+      user: sanitizeUser(savedUser),
     });
   } catch (error) {
     console.error("Error al crear usuario:", error);
@@ -69,7 +89,7 @@ module.exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user)
-      return res.status(404).json({ message: `Usuario no encontrado` });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     res.json({ message: "Usuario eliminado de la Base de datos" });
   } catch (error) {
     console.error(error);
@@ -81,7 +101,6 @@ module.exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const updateData = { ...req.body };
 
-  // Eliminar password y confirmPassword si están vacíos
   if (!updateData.password) {
     delete updateData.password;
     delete updateData.confirmPassword;
@@ -99,7 +118,7 @@ module.exports.updateUser = async (req, res) => {
 
     res.json({
       message: "Usuario actualizado exitosamente",
-      user: updatedUser,
+      user: sanitizeUser(updatedUser),
     });
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
@@ -107,16 +126,21 @@ module.exports.updateUser = async (req, res) => {
   }
 };
 
-
 module.exports.getUserById = async (req, res) => {
   try {
-    const user = await findUserById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado." });
+    const userId = req.user?.id || req.user?._id || req.params?.id;
+    if (!userId) {
+      return res.status(400).json({ message: "Usuario no autenticado" });
     }
-    res.status(200).json({ user });
+
+    const user = await User.findById(userId).select("-password").lean();
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.status(200).json({ user: sanitizeUser(user) });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error al obtener el usuario." });
+    res.status(500).json({ message: "Error al obtener el usuario" });
   }
 };
