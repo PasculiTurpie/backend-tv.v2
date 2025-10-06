@@ -1,32 +1,44 @@
 // src/middleware/attachUserIfPresent.js
 const jwt = require("jsonwebtoken");
 
+const JWT_SECRET =
+  process.env.JWT_ACCESS_SECRET ||
+  process.env.JWT_SECRET ||
+  "";
+
 function extractToken(req) {
-  // 1) cookie
+  if (req.cookies?.access_token) return req.cookies.access_token;
   if (req.cookies?.token) return req.cookies.token;
 
-  // 2) Authorization: Bearer <token>
-  const auth = req.headers?.authorization || "";
-  const m = auth.match(/^Bearer\s+(.+)$/i);
-  return m ? m[1] : null;
+  const auth = req.headers?.authorization || req.headers?.Authorization || "";
+  const match = auth.match(/^Bearer\s+(.+)$/i);
+  if (match) return match[1];
+
+  if (req.headers?.["x-access-token"]) return req.headers["x-access-token"];
+
+  return null;
 }
 
 function attachUserIfPresent(req, _res, next) {
+  if (!JWT_SECRET) {
+    return next();
+  }
+
   try {
     const token = extractToken(req);
     if (!token) return next();
 
-    const dec = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
 
     req.user = {
-      _id: dec.id || dec._id || dec.userId || null,
-      email: dec.email || dec.userEmail || dec.username || null,
-      role: dec.role || null,
+      _id: decoded.id || decoded._id || decoded.userId || null,
+      id: decoded.id || decoded._id || decoded.userId || null,
+      email: decoded.email || decoded.userEmail || decoded.username || null,
+      role: decoded.role || null,
     };
 
     return next();
-  } catch (_e) {
-    // Si falla el token, seguimos sin usuario (NO devolvemos 401 aquí)
+  } catch (_error) {
     return next();
   }
 }

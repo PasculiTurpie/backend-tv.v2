@@ -38,18 +38,53 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 /** CORS con credenciales + preflight */
-const allowed = [
+const DEFAULT_ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",
   "https://localhost:3000",
   "http://192.168.56.1:5173",
 ];
+
+const envAllowedOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const normalizeOrigin = (origin) => {
+  if (!origin) return origin;
+  try {
+    const { protocol, host } = new URL(origin);
+    return `${protocol}//${host}`;
+  } catch (_error) {
+    return origin;
+  }
+};
+
+const allowedOriginsSet = new Set(
+  [...DEFAULT_ALLOWED_ORIGINS, ...envAllowedOrigins].map(normalizeOrigin)
+);
+
+const allowAllOrigins = allowedOriginsSet.has("*");
+if (allowAllOrigins) {
+  allowedOriginsSet.delete("*");
+}
+
+const isOriginAllowed = (origin) => {
+  if (allowAllOrigins) return true;
+  if (!origin) return true;
+  if (allowedOriginsSet.has(origin)) return true;
+  const normalized = normalizeOrigin(origin);
+  return allowedOriginsSet.has(normalized);
+};
+
+const allowedOrigins = Array.from(allowedOriginsSet);
+const corsPreflightOrigin = allowAllOrigins ? true : allowedOrigins;
 app.use(
   cors({
     origin(origin, cb) {
       if (!origin) return cb(null, true); // Postman/cURL
-      if (allowed.includes(origin)) return cb(null, true);
+      if (isOriginAllowed(origin)) return cb(null, true);
       return cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
@@ -62,7 +97,7 @@ app.use(
 app.options(
   "*",
   cors({
-    origin: allowed,
+    origin: corsPreflightOrigin,
     credentials: true,
   })
 );
