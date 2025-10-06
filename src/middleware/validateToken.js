@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/users.model");
-const JWT_SECRET = process.env.JWT_ACCESS_SECRET || JWT_SECRET; // 👈
+const JWT_SECRET =
+  process.env.JWT_ACCESS_SECRET ||
+  process.env.JWT_SECRET ||
+  "dev_default_secret_change_me";
 
 function getTokenFromReq(req) {
   const h = req.headers?.authorization || req.headers?.Authorization;
