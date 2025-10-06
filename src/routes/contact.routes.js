@@ -1,13 +1,20 @@
-const express = require('express')
-const router = express.Router()
-const Contact = require('../controllers/contact.controller')
+const express = require("express");
+const ContactController = require("../controllers/contact.controller");
 
+const router = express.Router();
 
-router.get('/contact',Contact.getContact)
-router.post('/contact', Contact.createContact)
-router.get("/contact/:id", Contact.getIdContact);
-router.put("/contact/:id", Contact.updateContact);
-router.delete("/contact/:id",  Contact.deleteContact);
+const CONTACT_COLLECTION_ROUTES = ["/contacts", "/contact"];
+const CONTACT_ENTITY_ROUTES = ["/contacts/:id", "/contact/:id"];
 
+CONTACT_COLLECTION_ROUTES.forEach((path) => {
+  router.get(path, ContactController.getContact);
+  router.post(path, ContactController.createContact);
+});
 
-module.exports = router
+CONTACT_ENTITY_ROUTES.forEach((path) => {
+  router.get(path, ContactController.getIdContact);
+  router.put(path, ContactController.updateContact);
+  router.delete(path, ContactController.deleteContact);
+});
+
+module.exports = router;

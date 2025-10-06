@@ -1,13 +1,20 @@
-const express = require('express');
+const express = require("express");
+const IrdController = require("../controllers/ird.controller");
+
 const router = express.Router();
-const Ird = require('../controllers/ird.controller');
-const { authProfile } = require('../middleware/validateToken');
 
-router.get("/ird",  Ird.getIrd);
-router.get("/ird/:id", Ird.getIdIrd);
-router.post("/ird", Ird.createIrd);
-router.put("/ird/:id",  Ird.updateIrd);
-router.delete("/ird/:id", Ird.deleteIrd);
+const IRD_COLLECTION_ROUTES = ["/irds", "/ird"];
+const IRD_ENTITY_ROUTES = ["/irds/:id", "/ird/:id"];
 
+IRD_COLLECTION_ROUTES.forEach((path) => {
+  router.get(path, IrdController.getIrd);
+  router.post(path, IrdController.createIrd);
+});
+
+IRD_ENTITY_ROUTES.forEach((path) => {
+  router.get(path, IrdController.getIdIrd);
+  router.put(path, IrdController.updateIrd);
+  router.delete(path, IrdController.deleteIrd);
+});
 
 module.exports = router;
