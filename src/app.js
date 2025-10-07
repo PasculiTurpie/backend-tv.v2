@@ -23,6 +23,8 @@ const AuditRoutes = require("./routes/audit.routes");
 const BulkIrdRoutes = require("./routes/bulkIrd.routes");
 const TitanRoutes = require("./routes/titans.routes");
 
+const API_PREFIX = "/api/v2";
+
 const app = express();
 
 app.set("trust proxy", true);
@@ -94,10 +96,14 @@ app.use(attachUserIfPresent);
 app.use(validateTokenMaybe);
 app.use(autoAudit());
 
-app.use("/api/v2/auth", AuthRoutes);
-app.use("/api/v2/titans", TitanRoutes);
+app.get(`${API_PREFIX}/health`, (_req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.use(`${API_PREFIX}/auth`, AuthRoutes);
+app.use(`${API_PREFIX}/titans`, TitanRoutes);
 app.use(
-  "/api/v2",
+  API_PREFIX,
   protectMutating,
   UserRoutes,
   IrdRoutes,
@@ -112,5 +118,30 @@ app.use(
   AuditRoutes,
   BulkIrdRoutes
 );
+
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith(API_PREFIX)) {
+    return res.status(404).json({
+      message: "Recurso no encontrado",
+      path: req.originalUrl,
+    });
+  }
+  return next();
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
+  if (err?.message === "Not allowed by CORS") {
+    return res.status(403).json({
+      message: "Origen no permitido por CORS",
+      origin: req.headers?.origin || null,
+    });
+  }
+
+  console.error("Unhandled error:", err);
+  return res.status(500).json({
+    message: "Error interno del servidor",
+  });
+});
 
 module.exports = app;

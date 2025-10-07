@@ -3,18 +3,15 @@ const SatelliteController = require("../controllers/satellite.controller");
 
 const router = express.Router();
 
-const SATELLITE_COLLECTION_ROUTES = ["/satellites", "/satelite"];
-const SATELLITE_ENTITY_ROUTES = ["/satellites/:id", "/satelite/:id"];
+router
+  .route("/satellites")
+  .get(SatelliteController.getSatellites)
+  .post(SatelliteController.postSatellite);
 
-SATELLITE_COLLECTION_ROUTES.forEach((path) => {
-  router.get(path, SatelliteController.getSatellites);
-  router.post(path, SatelliteController.postSatellite);
-});
-
-SATELLITE_ENTITY_ROUTES.forEach((path) => {
-  router.get(path, SatelliteController.getSatelliteById);
-  router.put(path, SatelliteController.updateSatellite);
-  router.delete(path, SatelliteController.deleteSatellite);
-});
+router
+  .route("/satellites/:id")
+  .get(SatelliteController.getSatelliteById)
+  .put(SatelliteController.updateSatellite)
+  .delete(SatelliteController.deleteSatellite);
 
 module.exports = router;

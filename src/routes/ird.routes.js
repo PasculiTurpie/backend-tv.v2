@@ -3,18 +3,15 @@ const IrdController = require("../controllers/ird.controller");
 
 const router = express.Router();
 
-const IRD_COLLECTION_ROUTES = ["/irds", "/ird"];
-const IRD_ENTITY_ROUTES = ["/irds/:id", "/ird/:id"];
+router
+  .route("/irds")
+  .get(IrdController.getIrd)
+  .post(IrdController.createIrd);
 
-IRD_COLLECTION_ROUTES.forEach((path) => {
-  router.get(path, IrdController.getIrd);
-  router.post(path, IrdController.createIrd);
-});
-
-IRD_ENTITY_ROUTES.forEach((path) => {
-  router.get(path, IrdController.getIdIrd);
-  router.put(path, IrdController.updateIrd);
-  router.delete(path, IrdController.deleteIrd);
-});
+router
+  .route("/irds/:id")
+  .get(IrdController.getIdIrd)
+  .put(IrdController.updateIrd)
+  .delete(IrdController.deleteIrd);
 
 module.exports = router;

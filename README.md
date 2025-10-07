@@ -63,6 +63,7 @@ El servidor sólo comienza a escuchar una vez que la conexión a MongoDB se esta
 | Equipos        | `/equipos`, `/tipo-equipo`  |
 | Auditoría      | `/audits`                   |
 | Titans         | `/titans/services`, `/titans/services/multi` |
+| Salud del API  | `/health`                   |
 
 ## Titans API
 
