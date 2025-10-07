@@ -3,18 +3,15 @@ const EquipoController = require("../controllers/equipo.controller");
 
 const router = express.Router();
 
-const EQUIPO_COLLECTION_ROUTES = ["/equipos", "/equipo"];
-const EQUIPO_ENTITY_ROUTES = ["/equipos/:id", "/equipo/:id"];
+router
+  .route("/equipos")
+  .get(EquipoController.getEquipo)
+  .post(EquipoController.createEquipo);
 
-EQUIPO_COLLECTION_ROUTES.forEach((path) => {
-  router.get(path, EquipoController.getEquipo);
-  router.post(path, EquipoController.createEquipo);
-});
-
-EQUIPO_ENTITY_ROUTES.forEach((path) => {
-  router.get(path, EquipoController.getIdEquipo);
-  router.put(path, EquipoController.updateEquipo);
-  router.delete(path, EquipoController.deleteEquipo);
-});
+router
+  .route("/equipos/:id")
+  .get(EquipoController.getIdEquipo)
+  .put(EquipoController.updateEquipo)
+  .delete(EquipoController.deleteEquipo);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-// En multerConfig.js - agrega logs para debug
+// Configuración de multer para manejar uploads de Excel en memoria
 const multer = require("multer");
 const path = require("path");
 
@@ -6,13 +6,7 @@ const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
-  fileFilter: (req, file, cb) => {
-    console.log(
-      "Archivo recibido por multer:",
-      file.originalname,
-      file.mimetype
-    );
-
+  fileFilter: (_req, file, cb) => {
     const allowedTypes = [".xlsx", ".xls"];
     const fileExtension = path.extname(file.originalname).toLowerCase();
 

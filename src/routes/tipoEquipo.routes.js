@@ -3,11 +3,9 @@ const TipoEquipoController = require("../controllers/tipoEquipo.controller");
 
 const router = express.Router();
 
-const TIPO_EQUIPO_ROUTES = ["/tipo-equipo", "/tipos-equipo"];
-
-TIPO_EQUIPO_ROUTES.forEach((path) => {
-  router.get(path, TipoEquipoController.getTipoEquipo);
-  router.post(path, TipoEquipoController.createTipoEquipo);
-});
+router
+  .route("/tipo-equipo")
+  .get(TipoEquipoController.getTipoEquipo)
+  .post(TipoEquipoController.createTipoEquipo);
 
 module.exports = router;
